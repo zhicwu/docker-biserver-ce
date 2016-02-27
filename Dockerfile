@@ -12,7 +12,7 @@ MAINTAINER Zhichun Wu <zhicwu@gmail.com>
 ENV BISERVER_VERSION=6.0 BISERVER_BUILD=6.0.1.0-386 BISERVER_HOME=/biserver-ce \
 	APACHE_BASE_URL=http://www.apache.org/dyn/closer.lua?action=download&filename= \
 	MAVEN_BASE_URL=http://central.maven.org/maven2 \
-	MYSQL_DRIVER_VERSION=5.1.38 PRESTO_DRIVER_VERSION=0.138 \
+	MYSQL_DRIVER_VERSION=5.1.38 PRESTO_DRIVER_VERSION=0.139 \
 	DRILL_DIRVER_VERSION=1.5.0 JTDS_VERSION=1.3.1
 
 # Download Pentaho BI Server Community Edition
