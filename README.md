@@ -7,20 +7,21 @@ ubuntu:14.04
  |
  |--- zhicwu/java:8
        |
-       |--- zhicwu/biserver:latest
+       |--- zhicwu/biserver-ce:latest
 ```
 * Official Ubuntu Trusty(14.04) docker image
 * Oracle JDK 8 latest release
-* [Pentaho BI Server Community Editionl](http://community.pentaho.com/) 6.0.1.0-386 with plugins and patches:
+* [Pentaho BI Server Community Edition](http://community.pentaho.com/) 6.0.1.0-386 with plugins and patches:
  * [BTable](https://sourceforge.net/projects/btable/)
  * [Community Startup Tabs](http://www.webdetails.pt/ctools/cst/)
  * [Community Text Editor](http://www.webdetails.pt/ctools/cte/)
  * [D3 Component Library](https://github.com/webdetails/d3ComponentLibrary)
  * [FusionCharts](http://www.xpand-it.com/en/solutions-en/pentaho-fusioncharts-plugin-en) - registration required
- * Up-to-date JDBC drivers including: Apache Drill, MySQL, jTDS (Sybase / SQL Server) and Presto
+ * Up-to-date JDBC drivers: [Apache Drill]() 1.5.0, [MySQL Connector/J](http://dev.mysql.com/downloads/connector/j/) 5.1.38, [jTDS](https://sourceforge.net/projects/jtds/) 1.3.1 and [Presto](https://prestodb.io/docs/current/installation/jdbc.html) 0.139
  * [Pivot4J](http://www.pivot4j.org/)
  * [Saiku](http://community.meteorite.bi/) - enabled SaikuWidgetComponent in CDE
  * [WAQR](http://ci.pentaho.com/job/WAQR-Plugin/)
+ * [XMLA Provider](https://sourceforge.net/projects/xmlaconnect/) 1.0.0.98 - download from Help -> Document popup and install on your windows box
 
 ## Known issues
 * You need to patch Presto's JDBC driver so that it works with PDI and Mondiran
@@ -42,7 +43,7 @@ ubuntu:14.04
 # ./start-biserver.sh
 # docker logs -f bi
 ```
-You can now access the web UI via http://localhost:8080.
+You can now access the BI server via http://localhost:8080.
 
 ## How to build
 ```
