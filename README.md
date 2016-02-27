@@ -17,7 +17,7 @@ ubuntu:14.04
  * [Community Text Editor](http://www.webdetails.pt/ctools/cte/)
  * [D3 Component Library](https://github.com/webdetails/d3ComponentLibrary)
  * [FusionCharts](http://www.xpand-it.com/en/solutions-en/pentaho-fusioncharts-plugin-en) - registration required
- * Up-to-date JDBC drivers: [Apache Drill]() 1.5.0, [MySQL Connector/J](http://dev.mysql.com/downloads/connector/j/) 5.1.38, [jTDS](https://sourceforge.net/projects/jtds/) 1.3.1 and [Presto](https://prestodb.io/docs/current/installation/jdbc.html) 0.139
+ * Up-to-date JDBC drivers: [Apache Drill](http://drill.apache.org/docs/using-the-jdbc-driver/) 1.5.0, [MySQL Connector/J](http://dev.mysql.com/downloads/connector/j/) 5.1.38, [jTDS](https://sourceforge.net/projects/jtds/) 1.3.1 and [Presto](https://prestodb.io/docs/current/installation/jdbc.html) 0.139
  * [Pivot4J](http://www.pivot4j.org/)
  * [Saiku](http://community.meteorite.bi/) - enabled SaikuWidgetComponent in CDE
  * [WAQR](http://ci.pentaho.com/job/WAQR-Plugin/)
