@@ -78,6 +78,7 @@ RUN find $BISERVER_HOME -name "*.bat" -delete && mkdir -p ext \
 VOLUME ["$BISERVER_HOME/ext", "$BISERVER_HOME/tomcat/logs"]
 
 COPY docker-entrypoint.sh $BISERVER_HOME/docker-entrypoint.sh
+RUN chmod +x *.sh
 ENTRYPOINT ["./docker-entrypoint.sh"]
 
 #  8080 - HTTP

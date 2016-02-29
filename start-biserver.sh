@@ -50,7 +50,7 @@ setup_env() {
 }
 
 setup_dir() {
-  for i in $EXTDIR $LOGDIR; do
+  for i in $EXT_DIR $LOG_DIR; do
     if [ -d $i ]; then
       info "Reuse existing directory: $i"
     else
