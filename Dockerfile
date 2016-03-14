@@ -13,7 +13,8 @@ ENV BISERVER_VERSION=6.0 BISERVER_BUILD=6.0.1.0-386 BISERVER_HOME=/biserver-ce \
 	APACHE_BASE_URL=http://www.apache.org/dyn/closer.lua?action=download&filename= \
 	MAVEN_BASE_URL=http://central.maven.org/maven2 \
 	MYSQL_DRIVER_VERSION=5.1.38 PRESTO_DRIVER_VERSION=0.139 \
-	DRILL_DIRVER_VERSION=1.5.0 JTDS_VERSION=1.3.1
+	DRILL_DIRVER_VERSION=1.5.0 JTDS_VERSION=1.3.1 \
+	XMLA_CONNECTOR_VERSION=1.0.0.102
 
 # Download Pentaho BI Server Community Edition
 RUN wget --progress=dot:giga http://downloads.sourceforge.net/project/pentaho/Business%20Intelligence%20Server/${BISERVER_VERSION}/biserver-ce-${BISERVER_BUILD}.zip
@@ -45,7 +46,7 @@ RUN wget --progress=dot:giga http://central.maven.org/maven2/com/facebook/presto
 		http://central.maven.org/maven2/mysql/mysql-connector-java/${MYSQL_DRIVER_VERSION}/mysql-connector-java-${MYSQL_DRIVER_VERSION}.jar \
 		http://central.maven.org/maven2/net/sourceforge/jtds/jtds/${JTDS_VERSION}/jtds-${JTDS_VERSION}.jar \
 		"http://www.apache.org/dyn/closer.lua?action=download&filename=/drill/drill-${DRILL_DIRVER_VERSION}/apache-drill-${DRILL_DIRVER_VERSION}.tar.gz" \
-	&& wget -O tomcat/webapps/pentaho/docs/xmla-connector.exe https://sourceforge.net/projects/xmlaconnect/files/XMLA_Provider_v1.0.0.98.exe/download \
+	&& wget -O tomcat/webapps/pentaho/docs/xmla-connector.exe https://sourceforge.net/projects/xmlaconnect/files/XMLA_Provider_v${XMLA_CONNECTOR_VERSION}.exe/download \
 	&& rm -f tomcat/lib/mysql*.jar tomcat/lib/jtds*.jar \
 	&& tar zxf *.tar.gz \
 	&& mv *.jar apache-drill*/jars/jdbc-driver/*.jar tomcat/lib/. \
@@ -75,6 +76,18 @@ RUN find $BISERVER_HOME -name "*.bat" -delete && mkdir -p ext \
 	&& sed -i -e 's|\(\A/logout.*\Z=Anonymous\)|\1\n\A/plugin/cda/api/clearCache.*\Z=Authenticated\n\A/plugin/saiku/api/admin/discover/refresh.*\Z=Authenticated|' pentaho-solutions/system/applicationContext-spring-security.xml \
 	&& sed -i -e 's|\(<import resource="GettingStartedDB-spring.xml" />\).*|<!-- \1 -->|' pentaho-solutions/system/pentaho-spring-beans.xml
 
+# Compile and Install Tomcat Native Lib
+RUN apt-get update \
+	&& apt-get install -y libapr1-dev libssl-dev gcc make \
+	&& tar zxvf tomcat/bin/tomcat-native.tar.gz \
+	&& cd tomcat-native*/jni/native \
+	&& ./configure --with-apr=/usr/bin/apr-config --with-java-home=$JAVA_HOME --prefix=$BISERVER_HOME/tomcat \
+	&& make \
+	&& make install \
+	&& cd ../../.. \
+	&& rm -rf tomcat-native* \
+	&& rm -rf /var/lib/apt/lists/*
+	
 VOLUME ["$BISERVER_HOME/ext", "$BISERVER_HOME/tomcat/logs"]
 
 COPY docker-entrypoint.sh $BISERVER_HOME/docker-entrypoint.sh
