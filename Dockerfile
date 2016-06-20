@@ -93,11 +93,11 @@ RUN find $BISERVER_HOME -name "*.bat" -delete && mkdir -p ext \
 RUN apt-get update \
 	&& apt-get install -y libapr1-dev libssl-dev gcc make \
 	&& tar zxvf tomcat/bin/tomcat-native.tar.gz \
-	&& cd tomcat-native*/jni/native \
-	&& ./configure --with-apr=/usr/bin/apr-config --with-java-home=$JAVA_HOME --prefix=$BISERVER_HOME/tomcat \
+	&& cd tomcat-native*/native \
+	&& ./configure --with-apr=/usr/bin/apr-config --disable-openssl --with-java-home=$JAVA_HOME --prefix=$BISERVER_HOME/tomcat \
 	&& make \
 	&& make install \
-	&& cd ../../.. \
+	&& cd ../.. \
 	&& rm -rf tomcat-native* \
 	&& rm -rf /var/lib/apt/lists/*
 
