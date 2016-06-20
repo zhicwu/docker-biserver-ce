@@ -7,6 +7,11 @@ if [ "${1:0:1}" = '-' ]; then
 fi
 
 if [ "$1" = 'biserver' ]; then
+	: ${BISERVER_URL:="http://localhost:8080/pentaho/"}
+	: ${LOCALE_LANGUAGE:="en"}
+	: ${LOCALE_COUNTRY:="US"}
+
+
 	# you can mount a volume pointing to /biserver/ext for customization
 	if [ -d ext ]; then
 		# if you have custom scripts to run, let's do it
