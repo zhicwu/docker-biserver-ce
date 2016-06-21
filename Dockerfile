@@ -75,7 +75,7 @@ RUN find $BISERVER_HOME -name "*.bat" -delete && mkdir -p ext \
 	&& sed -i -e 's|\(<value>.xcdf</value>\)|\1<value>.saiku</value>|' pentaho-solutions/system/importExport.xml \
 	&& sed -i -e 's|\(<value>xcdf</value>\)|\1<value>saiku</value>|' pentaho-solutions/system/importExport.xml \
 	&& sed -i -e 's|\(<extension>xcdf</extension>\)|\1<extension>saiku</extension>|' pentaho-solutions/system/ImportHandlerMimeTypeDefinitions.xml \
-	&& sed -i -e 's|\(\A/logout.*\Z=Anonymous\)|\1\n\A/plugin/cda/api/clearCache.*\Z=Authenticated\n\A/plugin/saiku/api/admin/discover/refresh.*\Z=Authenticated|' pentaho-solutions/system/applicationContext-spring-security.xml \
+	&& sed -i -e 's|\(\A/logout.*\Z=Anonymous\)|\1\n\A/plugin/cda/api/clearCache.*\Z=Authenticated\n\\A/plugin/saiku/api/admin/discover/refresh.*\\Z=Authenticated|' pentaho-solutions/system/applicationContext-spring-security.xml \
 	&& sed -i -e 's|\(<import resource="GettingStartedDB-spring.xml" />\).*|<!-- \1 -->|' pentaho-solutions/system/pentaho-spring-beans.xml \
 	&& sed -i -e "s|<script language='JavaScript' type='text/javascript' src='.*brightcove.com.*'></script>||" tomcat/webapps/pentaho/mantle/home/index.jsp \
 	&& sed -i -e "s|script.src = '.*brightcove.*';||" tomcat/webapps/pentaho/mantle/home/content/getting_started_launch.html \
