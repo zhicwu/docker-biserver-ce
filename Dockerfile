@@ -87,7 +87,8 @@ RUN find $BISERVER_HOME -name "*.bat" -delete && mkdir -p ext \
 	&& find . -name *ga.js | xargs sed -i -e 's|//www\.google\-analytics\.com||' \
 	&& find . -name *ga.js | xargs sed -i -e 's|\?"https\://ssl"\:"http\://www"|?"/":"/"|' \
 	&& sed -i -e 's|self.template()|"Error!"|' pentaho-solutions/system/saiku/ui/saiku.min.js \
-	&& sed -i -e 's|http://meteorite.bi/|/|' pentaho-solutions/system/saiku/ui/saiku.min.js
+	&& sed -i -e 's|http://meteorite.bi/|/|' pentaho-solutions/system/saiku/ui/saiku.min.js \
+	&& sed -i -e "s|\(request.setRequestHeader('Authorization', auth);\)|// \1|" pentaho-solutions/system/saiku/ui/js/saiku/embed/SaikuEmbed.js
 
 # Compile and Install Tomcat Native Lib
 RUN apt-get update \
