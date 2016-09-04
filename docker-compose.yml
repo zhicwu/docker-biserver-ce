@@ -1,6 +1,7 @@
 version: '2'
 
 services:
+  biserver:
     build: .
     image: zhicwu/biserver-ce${BI_IMAGE_TAG}
     hostname: ${SERVER_HOST}
