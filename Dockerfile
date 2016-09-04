@@ -109,8 +109,11 @@ RUN find . -name "*.bat" -delete \
 	&& sed -i -e "s|<script language='JavaScript' type='text/javascript' src='.*brightcove.com.*'></script>||" tomcat/webapps/pentaho/mantle/home/index.jsp \
 	&& sed -i -e "s|script.src = '.*brightcove.*';||" tomcat/webapps/pentaho/mantle/home/content/getting_started_launch.html \
 	&& sed -i -e 's|"<script.*brightcove.*script>";|"";|' tomcat/webapps/pentaho/mantle/home/js/gettingStarted.js \
-	&& sed -i -e 's|\(<util:map id="defaultUserRoleMappings">\)|\1<!-- |' pentaho-solutions/system/defaultUser.spring.xml \
-	&& sed -i -e 's|\(<entry key-ref="singleTenantAdminUserName">\)| -->\1|' pentaho-solutions/system/defaultUser.spring.xml \
+	&& sed -i -e 's|\(<util:list id="powerUser">\)|<util:list id="admin">\n\t\t<value>org.pentaho.security.administerSecurity</value>\n\t\t<value>org.pentaho.scheduler.manage</value>\n\t\t<value>org.pentaho.repository.read</value>\n\t\t<value>org.pentaho.repository.create</value>\n\t\t<value>org.pentaho.security.publish</value>\n\t\t</util:list>\n\t\1|' pentaho-solutions/system/defaultUser.spring.xml \
+	&& sed -i -e 's|\(<util:map id="role-mappings">\)|\1\n\t\t<entry key="Admin" value-ref="admin" />|' pentaho-solutions/system/defaultUser.spring.xml \
+	&& sed -i -e 's|\(<util:map id="defaultUserRoleMappings">\)|\1\n\t\t<entry key="viewer">\n\t\t\t<util:list><ref bean="singleTenantAuthenticatedAuthorityName"/></util:list>\n\t\t</entry>\n\t\t<!-- |' pentaho-solutions/system/defaultUser.spring.xml \
+	&& sed -i -e 's|\(<entry key-ref="singleTenantAdminUserName">\)| -->\n\t\t\1|' pentaho-solutions/system/defaultUser.spring.xml \
+	&& sed -i -e 's|\(<ref bean="singleTenantAdminAuthorityName"/>\)|\1\n\t\t\t\t<value>Admin</value>|' pentaho-solutions/system/defaultUser.spring.xml \
 	&& find . -name "*.css" | xargs sed -i -e 's|http.*googleusercontent\.com||' \
 	&& rm -f pentaho-solutions/system/BTable/resources/datasources/*.cda \
 	&& find . -name *ga.js | xargs sed -i -e 's|//www\.google\-analytics\.com||' \
