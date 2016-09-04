@@ -3,7 +3,7 @@
 # This is a sample script demonstrating how to perform custom operations before each time BI server started.
 #
 echo "* Installing additional files..."
-/bin/cp -rf $BISERVER_HOME/ext/* $BISERVER_HOME/.
+/bin/cp -rf $EXT_DIR/* $BISERVER_HOME/.
 
 echo "* Enabling URL-based authentication...\(i.e. ...?userid=admin&password=password\)"
 sed -i -e 's/\(requestParameterAuthenticationEnabled=\).*/\1true/' $BISERVER_HOME/pentaho-solutions/system/security.properties
