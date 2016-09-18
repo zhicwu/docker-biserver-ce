@@ -90,6 +90,7 @@ RUN wget --progress=dot:giga https://github.com/zhicwu/pdi-cluster/releases/down
 
 # Configure BI Server, Remove External References and Patch Saiku Plugin
 RUN find . -name "*.bat" -delete \
+	&& find . -name "*.exe" -delete \
 	&& rm -f pentaho-solutions/system/kettle/slave-server-config.xml \
 	&& sed -i -e 's|\( class="bannercontent">.*\)\(<br /></td>\)|\1<br />To access OLAP cube via Excel/SharePoint, please install <a href="xmla-connector.exe">XMLA Connector</a> from <a href="http://www.arquery.com">Arquery</a>.\2|' tomcat/webapps/pentaho/docs/InformationMap.jsp \
 	&& touch pentaho-solutions/system/saiku/ui/js/saiku/plugins/CCC_Chart/cdo.js \
@@ -130,8 +131,8 @@ RUN find . -name "*.bat" -delete \
 	&& sed -i -e "s|\(request.setRequestHeader('Authorization', auth);\)|// \1|" pentaho-solutions/system/saiku/ui/js/saiku/embed/SaikuEmbed.js \
 	&& sed -i -e 's|\(SSLEngine="\).*\("\)|\1off\2|' tomcat/conf/server.xml \
 	&& mv data/hsqldb data/.hsqldb \
-	&& mkdir -p tomcat/logs/audit \
-	&& ln -s $BISERVER_HOME/tomcat/logs/audit $BISERVER_HOME/pentaho-solutions/system/logs/audit
+	&& mkdir -p pentaho-solutions/system/logs/audit \
+	&& ln -s $BISERVER_HOME/pentaho-solutions/system/logs/audit $BISERVER_HOME/tomcat/logs/audit
 
 VOLUME ["$BISERVER_HOME/data/hsqldb", "$BISERVER_HOME/tomcat/logs", "$BISERVER_HOME/pentaho-solutions/system/karaf/caches", "$BISERVER_HOME/pentaho-solutions/system/karaf/data", "/tmp"]
 
