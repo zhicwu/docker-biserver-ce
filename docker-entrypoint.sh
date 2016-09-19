@@ -19,12 +19,13 @@ set -e
 : ${LOCALE_COUNTRY:="US"}
 
 init_biserver() {
-	if [ ! -d /tmp/tomcat ] || [ ! -d /tmp/tomcat/temp ] || [ ! -d /tmp/tomcat/work ]; then
+	if [ ! -d /tmp/tomcat ] || [ ! -d /tmp/tomcat/temp ] || [ ! -d /tmp/tomcat/work ] || [ ! -d $BISERVER_HOME/tomcat/logs/audit ]; then
 		echo "Creating temporary directories for tomcat..."
 		rm -rf tomcat/temp tomcat/work \
-			&& mkdir -p /tmp/tomcat/temp /tmp/tomcat/work \
+			&& mkdir -p /tmp/tomcat/temp /tmp/tomcat/work tomcat/logs/audit pentaho-solutions/system/logs \
 			&& ln -s /tmp/tomcat/temp tomcat/temp \
-			&& ln -s /tmp/tomcat/work tomcat/work
+			&& ln -s /tmp/tomcat/work tomcat/work \
+			&& ln -s $BISERVER_HOME/tomcat/logs/audit $BISERVER_HOME/pentaho-solutions/system/logs/audit
 	fi
 
 	# only useful for testing / development purpose

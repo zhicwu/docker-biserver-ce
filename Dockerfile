@@ -130,9 +130,7 @@ RUN find . -name "*.bat" -delete \
 	&& sed -i -e 's|http://meteorite.bi/|/|' pentaho-solutions/system/saiku/ui/saiku.min.js \
 	&& sed -i -e "s|\(request.setRequestHeader('Authorization', auth);\)|// \1|" pentaho-solutions/system/saiku/ui/js/saiku/embed/SaikuEmbed.js \
 	&& sed -i -e 's|\(SSLEngine="\).*\("\)|\1off\2|' tomcat/conf/server.xml \
-	&& mv data/hsqldb data/.hsqldb \
-	&& mkdir -p tomcat/logs/audit pentaho-solutions/system/logs \
-	&& ln -s $BISERVER_HOME/tomcat/logs/audit $BISERVER_HOME/pentaho-solutions/system/logs/audit
+	&& mv data/hsqldb data/.hsqldb
 
 VOLUME ["$BISERVER_HOME/data/hsqldb", "$BISERVER_HOME/tomcat/logs", "$BISERVER_HOME/pentaho-solutions/system/karaf/caches", "$BISERVER_HOME/pentaho-solutions/system/karaf/data", "/tmp"]
 
