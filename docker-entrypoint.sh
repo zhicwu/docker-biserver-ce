@@ -3,7 +3,7 @@ set -e
 
 : ${EXT_DIR:="/bi-ext"}
 
-: ${BI_JAVA_OPTS:='-Djava.security.egd=file:/dev/./urandom -Xms4096m -Xmx4096m -Djava.awt.headless=true -Dpentaho.karaf.root.transient=true -XX:+HeapDumpOnOutOfMemoryError -XX:ErrorFile=../logs/jvm_error_%p.log -XX:HeapDumpPath=../logs/ -verbose:gc -Xloggc:../logs/gc.log -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintHeapAtGC -Dsun.rmi.dgc.client.gcInterval=3600000 -Dsun.rmi.dgc.server.gcInterval=3600000 -Dfile.encoding=utf8 -DDI_HOME="$DI_HOME"'}
+: ${BI_JAVA_OPTS:='-Djava.security.egd=file:/dev/./urandom -Xms4096m -Xmx4096m -Djava.awt.headless=true -Dpentaho.karaf.root.transient=true -XX:+HeapDumpOnOutOfMemoryError -XX:ErrorFile=../logs/jvm_error_%p.log -XX:HeapDumpPath=../logs/ -verbose:gc -Xloggc:../logs/gc.log -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintHeapAtGC -Dsun.rmi.dgc.client.gcInterval=3600000 -Dsun.rmi.dgc.server.gcInterval=3600000 -Dfile.encoding=utf8 -DDI_HOME=\"$DI_HOME\"'}
 
 : ${PDI_HADOOP_CONFIG:="hdp23"}
 
@@ -33,7 +33,7 @@ init_biserver() {
 	if [ ! -f data/hsqldb/hibernate.properties ]; then
 		/bin/cp -rf data/.hsqldb/* data/hsqldb/. \
 			&& mkdir -p pentaho-solutions/system/karaf/data/log pentaho-solutions/system/karaf/data/tmp \
-			&& sed -i -e 's|\(CATALINA_OPTS="\)\(.*\)|# http://wiki.apache.org/tomcat/HowTo/FasterStartUp#Entropy_Source\n\1 -DKETTLE_HOME='"$KETTLE_HOME $BI_JAVA_OPTS"' \2|' start-pentaho.sh \
+			&& sed -i -e 's|\(CATALINA_OPTS=\)\(.*\)|# http://wiki.apache.org/tomcat/HowTo/FasterStartUp#Entropy_Source\n\1" -DKETTLE_HOME='"$KETTLE_HOME $BI_JAVA_OPTS"'"|' start-pentaho.sh \
 			&& sed -i -e 's|\(fully-qualified-server-url=\).*|\1'"$SERVER_URL"'|' pentaho-solutions/system/server.properties \
 			&& sed -i -e 's|\(locale-language=\).*|\1'"$LOCALE_LANGUAGE"'|' pentaho-solutions/system/server.properties \
 			&& sed -i -e 's|\(locale-country=\).*|\1'"$LOCALE_COUNTRY"'|' pentaho-solutions/system/server.properties \
