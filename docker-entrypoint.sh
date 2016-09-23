@@ -19,7 +19,7 @@ set -e
 : ${LOCALE_COUNTRY:="US"}
 
 init_biserver() {
-	if [ ! -d /tmp/tomcat ] || [ ! -d /tmp/tomcat/temp ] || [ ! -d /tmp/tomcat/work ] || [ ! -d $BISERVER_HOME/tomcat/logs/audit ]; then
+	if [ ! -d $BISERVER_HOME/tomcat/logs/audit ]; then
 		echo "Creating temporary directories for tomcat..."
 		rm -rf tomcat/temp tomcat/work \
 			&& mkdir -p /tmp/tomcat/temp /tmp/tomcat/work tomcat/logs/audit pentaho-solutions/system/logs \
@@ -39,6 +39,11 @@ init_biserver() {
 			&& sed -i -e 's|\(locale-country=\).*|\1'"$LOCALE_COUNTRY"'|' pentaho-solutions/system/server.properties \
 			&& sed -i -e 's|\(<value>\)false\(</value>\)|\1true\2|' pentaho-solutions/system/systemListeners.xml \
 			&& sed -i 's/^\(active.hadoop.configuration=\).*/\1'"$PDI_HADOOP_CONFIG"'/' $KETTLE_HOME/plugins/pentaho-big-data-plugin/plugin.properties
+	fi
+	
+	if [ ! -d ~/.pentaho ]; then
+		echo "Creating pentaho directory..."
+		ln -s $BISERVER_HOME/.pentaho ~/.pentaho
 	fi
 }
 

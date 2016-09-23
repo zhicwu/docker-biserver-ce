@@ -133,7 +133,7 @@ RUN find . -name "*.bat" -delete \
 	&& sed -i -e 's|\(,pdi-dataservice\)||' pentaho-solutions/system/karaf/etc/org.apache.karaf.features.cfg \
 	&& mv data/hsqldb data/.hsqldb
 
-VOLUME ["$BISERVER_HOME/data/hsqldb", "$BISERVER_HOME/tomcat/logs", "$BISERVER_HOME/pentaho-solutions/system/karaf/caches", "$BISERVER_HOME/pentaho-solutions/system/karaf/data", "/tmp"]
+VOLUME ["$BISERVER_HOME/.pentaho", "$BISERVER_HOME/data/hsqldb", "$BISERVER_HOME/tomcat/logs", "$BISERVER_HOME/pentaho-solutions/system/jackrabbit/repository", "$BISERVER_HOME/pentaho-solutions/system/karaf/caches", "$BISERVER_HOME/pentaho-solutions/system/karaf/data", "/tmp"]
 
 COPY docker-entrypoint.sh docker-entrypoint.sh
 RUN chmod +x *.sh
