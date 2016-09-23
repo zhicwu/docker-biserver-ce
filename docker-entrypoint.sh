@@ -50,7 +50,7 @@ apply_changes() {
 			echo "Running custom installation script..."
 			. $EXT_DIR/custom_install.sh
 		# otherwise, simply override files based what we have under ext directory
-		else
+		elif [ "$(ls -A $EXT_DIR)" ]; then
 			echo "Copying files from $EXT_DIR to $BISERVER_HOME..."
 			/bin/cp -Rf $EXT_DIR/* .
 		fi
