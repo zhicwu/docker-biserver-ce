@@ -52,7 +52,7 @@ RUN wget --progress=dot:giga http://central.maven.org/maven2/mysql/mysql-connect
 
 # Compile and Install Tomcat Native Lib
 RUN apt-get update \
-	&& apt-get install -y libapr1-dev libssl-dev gcc make \
+	&& apt-get install -y libjna-java libapr1-dev libssl-dev gcc make \
 	&& tar zxvf tomcat/bin/tomcat-native.tar.gz \
 	&& cd tomcat-native*/native \
 	&& ./configure --with-apr=/usr/bin/apr-config --disable-openssl --with-java-home=$JAVA_HOME --prefix=$BISERVER_HOME/tomcat \
@@ -75,14 +75,22 @@ RUN wget --progress=dot:giga https://github.com/zhicwu/pdi-cluster/releases/down
 	&& $JAVA_HOME/bin/jar uf ../pentaho-solutions/system/pdi-pur-plugin/lib/pdi-pur-plugin-${BISERVER_BUILD}.jar org/pentaho/di/repository/pur/LazyUnifiedRepositoryDirectory.class \
 	&& $JAVA_HOME/bin/jar uf ../pentaho-solutions/system/pdi-pur-plugin/pdi-pur-plugin-${BISERVER_BUILD}.jar org/pentaho/di/repository/pur/LazyUnifiedRepositoryDirectory.class \
 	&& rm -rf org/pentaho/di/repository \
+	&& $JAVA_HOME/bin/jar uf ../tomcat/webapps/pentaho/WEB-INF/lib/kettle-core-${BISERVER_BUILD}.jar org/pentaho/di/core/row \
+	&& rm -rf org/pentaho/di/core/row \
+	&& $JAVA_HOME/bin/jar uf ../tomcat/webapps/pentaho/WEB-INF/lib/kettle-engine-${BISERVER_BUILD}.jar kettle-servlets.xml \
 	&& $JAVA_HOME/bin/jar uf ../tomcat/webapps/pentaho/WEB-INF/lib/kettle-engine-${BISERVER_BUILD}.jar org/pentaho/di \
 	&& rm -rf org/pentaho/di \
 	&& $JAVA_HOME/bin/jar uf ../tomcat/webapps/pentaho/WEB-INF/lib/pentaho-platform-scheduler-${BISERVER_BUILD}.jar org/pentaho/platform/scheduler2/quartz \
 	&& cd .. \
-	&& rm -rf patches *.jar
+	&& rm -rf patches *.jar \
+	&& wget https://maven.java.net/content/repositories/releases/net/java/dev/jna/jna/4.2.2/jna-4.2.2.jar \
+		https://maven.java.net/content/repositories/releases/net/java/dev/jna/jna-platform/4.2.2/jna-platform-4.2.2.jar \
+		http://central.maven.org/maven2/com/github/dblock/oshi-core/3.2/oshi-core-3.2.jar \
+	&& mv *.jar tomcat/webapps/pentaho/WEB-INF/lib/.
 
 # Configure BI Server, Remove External References and Patch Saiku Plugin
 RUN find . -name "*.bat" -delete \
+	&& find . -name "*.exe" -delete \
 	&& rm -f pentaho-solutions/system/kettle/slave-server-config.xml \
 	&& sed -i -e 's|\( class="bannercontent">.*\)\(<br /></td>\)|\1<br />To access OLAP cube via Excel/SharePoint, please install <a href="xmla-connector.exe">XMLA Connector</a> from <a href="http://www.arquery.com">Arquery</a>.\2|' tomcat/webapps/pentaho/docs/InformationMap.jsp \
 	&& touch pentaho-solutions/system/saiku/ui/js/saiku/plugins/CCC_Chart/cdo.js \
