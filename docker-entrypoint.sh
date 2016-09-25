@@ -27,11 +27,10 @@ fix_permission() {
 	
 	if [ "$HOST_USER_ID" != "" ]; then
 		# based on https://github.com/schmidigital/permission-fix/blob/master/tools/permission_fix
-		DOCKER_USER='pentaho'
 		UNUSED_USER_ID=21338
 
 		# Setting User Permissions
-		DOCKER_USER_CURRENT_ID=`id -u $DOCKER_USER`
+		DOCKER_USER_CURRENT_ID=`id -u $BISERVER_USER`
 
 		if [ "$DOCKER_USER_CURRENT_ID" != "$HOST_USER_ID" ]; then
 		  DOCKER_USER_OLD=`getent passwd $HOST_USER_ID | cut -d: -f1`
@@ -40,11 +39,11 @@ fix_permission() {
 			usermod -o -u $UNUSED_USER_ID $DOCKER_USER_OLD
 		  fi
 
-		  usermod -o -u $HOST_USER_ID $DOCKER_USER || true
+		  usermod -o -u $HOST_USER_ID $BISERVER_USER || true
 		fi
 	fi
 	
-	chown -R $DOCKER_USER:$DOCKER_USER $BISERVER_HOME
+	chown -R $BISERVER_USER:$BISERVER_USER $BISERVER_HOME
 }
 
 update_db() {
@@ -52,8 +51,8 @@ update_db() {
 	: ${DATABASE_DRIVER:="com.mysql.jdbc.Driver"}
 	: ${DATABASE_HOST:="localhost"}
 	: ${DATABASE_PORT:="3306"}
-	: ${DATABASE_USER:="pentaho"}
-	: ${DATABASE_PASSWD:="pentaho"}
+	: ${DATABASE_USER:="$BISERVER_USER"}
+	: ${DATABASE_PASSWD:="$BISERVER_USER"}
 	: ${DATABASE_HIBERNATE:="pbi_hibernate"}
 	: ${DATABASE_HIBERNATE_URL:="jdbc:mysql://$DATABASE_HOST:DATABASE_PORT/$DATABASE_HIBERNATE"}
 	: ${DATABASE_QUARTZ:="pbi_quartz"}
@@ -126,7 +125,7 @@ init_biserver() {
 			#&& sed -i -e 's|\(,pdi-dataservice,pentaho-marketplace\)||' pentaho-solutions/system/karaf/etc/org.apache.karaf.features.cfg \
 	fi
 
-	if [ "`echo $STORAGE_TYPE | tr '[:upper:]' '[:lower:]'`" != "" ] && [ -f pentaho-solutions/system/hibernate/${STORAGE_TYPE}.hibernate.cfg.xml ]; then
+	if [ "$STORAGE_TYPE" != "" ] && [ -f pentaho-solutions/system/hibernate/${STORAGE_TYPE}.hibernate.cfg.xml ]; then
 		sed -i -e 's|\(<!-- \[BEGIN HSQLDB DATABASES\]\).*|\1|' tomcat/webapps/pentaho/WEB-INF/web.xml \
 			&& sed -i -e 's|.*\(\[END HSQLDB DATABASES\] -->\)|\1|' tomcat/webapps/pentaho/WEB-INF/web.xml \
 			&& sed -i -e 's|\(<!-- \[BEGIN HSQLDB STARTER\]\).*|\1|' tomcat/webapps/pentaho/WEB-INF/web.xml \
@@ -226,7 +225,7 @@ if [ "$1" = 'biserver' ]; then
 	#sed -i -e 's|.*\(runtimeFeatures=\).*|\1'"ssh,http,war,kar,cxf"'|' system/karaf/etc-carte/org.pentaho.features.cfg 
 
 	# now start the bi server
-	su - pentaho -c ./start-pentaho.sh
+	su - $BISERVER_USER -c ./start-pentaho.sh
 fi
 
 exec "$@"
