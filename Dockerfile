@@ -24,9 +24,14 @@ RUN apt-get update \
 # Download Pentaho BI Server Community Edition and Unpack
 RUN wget --progress=dot:giga http://downloads.sourceforge.net/project/pentaho/Business%20Intelligence%20Server/${BISERVER_VERSION}/biserver-ce-${BISERVER_BUILD}.zip \
 	&& unzip -q *.zip \
-	&& rm -f *.zip \
+	&& rm -f *.zip
+
+# Add Entry Point and Update ACL
+COPY docker-entrypoint.sh docker-entrypoint.sh
+RUN chmod +x *.sh \
 	&& chown -R pentaho:pentaho $BISERVER_HOME
 
+# Switch User and Directory
 USER pentaho
 WORKDIR $BISERVER_HOME
 
@@ -139,8 +144,6 @@ RUN find . -name "*.bat" -delete \
 
 VOLUME ["$BISERVER_HOME/.pentaho", "$BISERVER_HOME/data/hsqldb", "$BISERVER_HOME/tomcat/logs", "$BISERVER_HOME/pentaho-solutions/system/jackrabbit/repository", "$BISERVER_HOME/pentaho-solutions/system/karaf/caches", "$BISERVER_HOME/pentaho-solutions/system/karaf/data", "/tmp"]
 
-COPY docker-entrypoint.sh docker-entrypoint.sh
-RUN chmod +x *.sh
 ENTRYPOINT ["./docker-entrypoint.sh"]
 
 #  8080 - HTTP
