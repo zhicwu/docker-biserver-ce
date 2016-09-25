@@ -18,46 +18,20 @@ set -e
 : ${LOCALE_LANGUAGE:="en"}
 : ${LOCALE_COUNTRY:="US"}
 
-: ${DOCKER_GROUP:="pentaho"}
-: ${DOCKER_USER:="pentaho"}
+: ${HOST_USER_ID:="1000"}
 
-map_user() {
+fix_permission() {
 	# shamelessly copied from https://github.com/schmidigital/permission-fix/blob/master/tools/permission_fix
+	DOCKER_USER='pentaho'
 	UNUSED_USER_ID=21338
-	UNUSED_GROUP_ID=21337
 
 	echo "Fixing permissions..."
-
-	# Setting Group Permissions
-	DOCKER_GROUP_CURRENT_ID=`id -g $DOCKER_GROUP`
-
-	if [ $DOCKER_GROUP_CURRENT_ID -eq $HOST_GROUP_ID ]; then
-	  echo "Group $DOCKER_GROUP is already mapped to $DOCKER_GROUP_CURRENT_ID. Nice!"
-	else
-	  echo "Check if group with ID $HOST_GROUP_ID already exists"
-	  DOCKER_GROUP_OLD=`getent group $HOST_GROUP_ID | cut -d: -f1`
-
-	  if [ -z "$DOCKER_GROUP_OLD" ]; then
-		echo "Group ID is free. Good."
-	  else
-		echo "Group ID is already taken by group: $DOCKER_GROUP_OLD"
-
-		echo "Changing the ID of $DOCKER_GROUP_OLD group to UNUSED_GROUP_ID"
-		groupmod -o -g $UNUSED_GROUP_ID $DOCKER_GROUP_OLD
-	  fi
-
-	  echo "Changing the ID of $DOCKER_GROUP group to $HOST_GROUP_ID"
-	  groupmod -o -g $HOST_GROUP_ID $DOCKER_GROUP || true
-	  echo "Finished"
-	  echo "-- -- -- -- --"
-	fi
 
 	# Setting User Permissions
 	DOCKER_USER_CURRENT_ID=`id -u $DOCKER_USER`
 
 	if [ $DOCKER_USER_CURRENT_ID -eq $HOST_USER_ID ]; then
 	  echo "User $DOCKER_USER is already mapped to $DOCKER_USER_CURRENT_ID. Nice!"
-
 	else
 	  echo "Check if user with ID $HOST_USER_ID already exists"
 	  DOCKER_USER_OLD=`getent passwd $HOST_USER_ID | cut -d: -f1`
@@ -66,7 +40,6 @@ map_user() {
 		echo "User ID is free. Good."
 	  else
 		echo "User ID is already taken by user: $DOCKER_USER_OLD"
-
 		echo "Changing the ID of $DOCKER_USER_OLD to $UNUSED_USER_ID"
 		usermod -o -u $UNUSED_USER_ID $DOCKER_USER_OLD
 	  fi
@@ -75,12 +48,12 @@ map_user() {
 	  usermod -o -u $HOST_USER_ID $DOCKER_USER || true
 	  echo "Finished"
 	fi
+	
+	chown -R $DOCKER_USER:$DOCKER_USER $BISERVER_HOME /tmp/*
 }
 
 init_biserver() {
 	if [ ! -d $BISERVER_HOME/tomcat/logs/audit ]; then
-		map_user
-		
 		echo "Creating temporary directories for tomcat..."
 		rm -rf tomcat/temp tomcat/work \
 			&& mkdir -p /tmp/tomcat/temp /tmp/tomcat/work tomcat/logs/audit pentaho-solutions/system/logs \
@@ -185,13 +158,15 @@ if [ "$1" = 'biserver' ]; then
 	gen_kettle_config
 	apply_changes
 
+	fix_permission
+	
 	# update configuration based on environment variables
 	# send log output to stdout
 	#sed -i 's/^\(.*rootLogger.*\), *out *,/\1, stdout,/' system/karaf/etc/org.ops4j.pax.logging.cfg
 	#sed -i -e 's|.*\(runtimeFeatures=\).*|\1'"ssh,http,war,kar,cxf"'|' system/karaf/etc-carte/org.pentaho.features.cfg 
 
 	# now start the bi server
-	./start-pentaho.sh
+	su - pentaho -c ./start-pentaho.sh
 fi
 
 exec "$@"

@@ -26,13 +26,10 @@ RUN wget --progress=dot:giga http://downloads.sourceforge.net/project/pentaho/Bu
 	&& unzip -q *.zip \
 	&& rm -f *.zip
 
-# Add Entry Point and Update ACL
+# Add Entry Point
 COPY docker-entrypoint.sh $BISERVER_HOME/docker-entrypoint.sh
-RUN chmod +x $BISERVER_HOME/*.sh \
-	&& chown -R pentaho:pentaho $BISERVER_HOME
 
-# Switch User and Directory
-USER pentaho
+# Switch Directory
 WORKDIR $BISERVER_HOME
 
 # Download Patches / Plugins
@@ -140,7 +137,9 @@ RUN find . -name "*.bat" -delete \
 	&& sed -i -e 's|http://meteorite.bi/|/|' pentaho-solutions/system/saiku/ui/saiku.min.js \
 	&& sed -i -e "s|\(request.setRequestHeader('Authorization', auth);\)|// \1|" pentaho-solutions/system/saiku/ui/js/saiku/embed/SaikuEmbed.js \
 	&& sed -i -e 's|\(SSLEngine="\).*\("\)|\1off\2|' tomcat/conf/server.xml \
-	&& mv data/hsqldb data/.hsqldb
+	&& mv data/hsqldb data/.hsqldb \
+	&& chmod +x $BISERVER_HOME/*.sh \
+	&& chown -R pentaho:pentaho $BISERVER_HOME
 
 VOLUME ["$BISERVER_HOME/.pentaho", "$BISERVER_HOME/data/hsqldb", "$BISERVER_HOME/tomcat/logs", "$BISERVER_HOME/pentaho-solutions/system/jackrabbit/repository", "$BISERVER_HOME/pentaho-solutions/system/karaf/caches", "$BISERVER_HOME/pentaho-solutions/system/karaf/data", "/tmp"]
 
