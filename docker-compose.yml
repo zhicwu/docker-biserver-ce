@@ -15,13 +15,12 @@ services:
       - ./data/.pentaho:/biserver-ce/.pentaho:rw
       - ./data/hsqldb:/biserver-ce/data/hsqldb:rw
       - ./data/logs:/biserver-ce/tomcat/logs:rw
-      - ./data/osgi/cache:/biserver-ce/pentaho-solutions/system/karaf/caches:rw
-      - ./data/osgi/data:/biserver-ce/pentaho-solutions/system/karaf/data:rw
       - ./data/repository:/biserver-ce/pentaho-solutions/system/jackrabbit/repository:rw
-      - ./data/tmp:/tmp:rw
+      - ./data/tmp:/biserver-ce/tmp:rw
     environment:
       BI_JAVA_OPTS: '${BI_JAVA_OPTS}'
       HOST_USER_ID: ${HOST_USER_ID}
+      STORAGE_TYPE: ${STORAGE_TYPE}
       PDI_HADOOP_CONFIG: ${PDI_HADOOP_CONFIG}
       PDI_MAX_LOG_LINES: ${PDI_MAX_LOG_LINES}
       PDI_MAX_LOG_TIMEOUT: ${PDI_MAX_LOG_TIMEOUT}

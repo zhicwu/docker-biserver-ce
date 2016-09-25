@@ -18,47 +18,102 @@ set -e
 : ${LOCALE_LANGUAGE:="en"}
 : ${LOCALE_COUNTRY:="US"}
 
-: ${HOST_USER_ID:="1000"}
+: ${HOST_USER_ID:=""}
+
+: ${STORAGE_TYPE:=""}
 
 fix_permission() {
-	# based on https://github.com/schmidigital/permission-fix/blob/master/tools/permission_fix
-	DOCKER_USER='pentaho'
-	UNUSED_USER_ID=21338
-
 	echo "Fixing permissions..."
+	
+	if [ "$HOST_USER_ID" != "" ]; then
+		# based on https://github.com/schmidigital/permission-fix/blob/master/tools/permission_fix
+		UNUSED_USER_ID=21338
 
-	# Setting User Permissions
-	DOCKER_USER_CURRENT_ID=`id -u $DOCKER_USER`
+		# Setting User Permissions
+		DOCKER_USER_CURRENT_ID=`id -u $BISERVER_USER`
 
-	if [ "$DOCKER_USER_CURRENT_ID" != "$HOST_USER_ID" ]; then
-	  DOCKER_USER_OLD=`getent passwd $HOST_USER_ID | cut -d: -f1`
+		if [ "$DOCKER_USER_CURRENT_ID" != "$HOST_USER_ID" ]; then
+		  DOCKER_USER_OLD=`getent passwd $HOST_USER_ID | cut -d: -f1`
 
-	  if [ ! -z "$DOCKER_USER_OLD" ]; then
-		usermod -o -u $UNUSED_USER_ID $DOCKER_USER_OLD
-	  fi
+		  if [ ! -z "$DOCKER_USER_OLD" ]; then
+			usermod -o -u $UNUSED_USER_ID $DOCKER_USER_OLD
+		  fi
 
-	  usermod -o -u $HOST_USER_ID $DOCKER_USER || true
+		  usermod -o -u $HOST_USER_ID $BISERVER_USER || true
+		fi
 	fi
 	
-	chown -R $DOCKER_USER:$DOCKER_USER $BISERVER_HOME /tmp/*
+	chown -R $BISERVER_USER:$BISERVER_USER $BISERVER_HOME
+}
+
+update_db() {
+	: ${DATABASE_DIALECT:="org.hibernate.dialect.MySQL5InnoDBDialect"}
+	: ${DATABASE_DRIVER:="com.mysql.jdbc.Driver"}
+	: ${DATABASE_HOST:="localhost"}
+	: ${DATABASE_PORT:="3306"}
+	: ${DATABASE_USER:="$BISERVER_USER"}
+	: ${DATABASE_PASSWD:="$BISERVER_USER"}
+	: ${DATABASE_HIBERNATE:="pbi_hibernate"}
+	: ${DATABASE_HIBERNATE_URL:="jdbc:mysql://$DATABASE_HOST:DATABASE_PORT/$DATABASE_HIBERNATE"}
+	: ${DATABASE_QUARTZ:="pbi_quartz"}
+	: ${DATABASE_QUARTZ_URL:="jdbc:mysql://$DATABASE_HOST:DATABASE_PORT/$DATABASE_QUARTZ"}
+	: ${DATABASE_REPOSITORY:="pbi_jackrabbit"}
+	: ${DATABASE_REPOSITORY_URL:="jdbc:mysql://$DATABASE_HOST:DATABASE_PORT/$DATABASE_REPOSITORY"}
+	: ${DATABASE_VALIDATION_QUERY:="SELECT 1"}
+	: ${DATABASE_TYPE:="mysql"}
+	
+	/bin/cp -f $BISERVER_HOME/pentaho-solutions/system/jackrabbit/repository.xml.template $BISERVER_HOME/pentaho-solutions/system/jackrabbit/repository.xml \
+		&& sed -i -e 's|\(jdbc.driver=\).*|\1'"$DATABASE_DRIVER"'|' pentaho-solutions/system/applicationContext-spring-security-hibernate.properties \
+		&& sed -i -e 's|\(jdbc.url=\).*|\1'"$DATABASE_HIBERNATE_URL"'|' pentaho-solutions/system/applicationContext-spring-security-hibernate.properties \
+		&& sed -i -e 's|\(jdbc.username=\).*|\1'"$DATABASE_USER"'|' pentaho-solutions/system/applicationContext-spring-security-hibernate.properties \
+		&& sed -i -e 's|\(jdbc.password=\).*|\1'"$DATABASE_PASSWD"'|' pentaho-solutions/system/applicationContext-spring-security-hibernate.properties \
+		&& sed -i -e 's|\(hibernate.dialect=\).*|\1'"$DATABASE_DIALECT"'|' pentaho-solutions/system/applicationContext-spring-security-hibernate.properties \
+		&& sed -i -e 's|\(datasource.driver.classname=\).*|\1'"$DATABASE_DRIVER"'|' pentaho-solutions/system/applicationContext-spring-security-jdbc.properties \
+		&& sed -i -e 's|\(datasource.url=\).*|\1'"$DATABASE_REPOSITORY_URL"'|' pentaho-solutions/system/applicationContext-spring-security-jdbc.properties \
+		&& sed -i -e 's|\(datasource.username=\).*|\1'"$DATABASE_USER"'|' pentaho-solutions/system/applicationContext-spring-security-jdbc.properties \
+		&& sed -i -e 's|\(datasource.password=\).*|\1'"$DATABASE_PASSWD"'|' pentaho-solutions/system/applicationContext-spring-security-jdbc.properties \
+		&& sed -i -e 's|\(datasource.validation.query=\).*|\1'"$DATABASE_VALIDATION_QUERY"'|' pentaho-solutions/system/applicationContext-spring-security-jdbc.properties \
+		&& sed -i -e 's|\(<config-file>\).*\(</config-file>\)|\1system/hibernate/'"$STORAGE_TYPE"'.hibernate.cfg.xml\2|' pentaho-solutions/system/hibernate/hibernate-settings.xml \
+		&& sed -i -e 's|\(<property name="connection.driver_class">\).*\(</property>\)|\1'"$DATABASE_DRIVER"'\2|' pentaho-solutions/system/hibernate/${STORAGE_TYPE}.hibernate.cfg.xml \
+		&& sed -i -e 's|\(<property name="connection.url">\).*\(</property>\)|\1'"$DATABASE_REPOSITORY_URL"'\2|' pentaho-solutions/system/hibernate/${STORAGE_TYPE}.hibernate.cfg.xml \
+		&& sed -i -e 's|\(<property name="dialect">\).*\(</property>\)|\1'"$DATABASE_DIALECT"'\2|' pentaho-solutions/system/hibernate/${STORAGE_TYPE}.hibernate.cfg.xml \
+		&& sed -i -e 's|\(<property name="connection.username">\).*\(</property>\)|\1'"$DATABASE_USER"'\2|' pentaho-solutions/system/hibernate/${STORAGE_TYPE}.hibernate.cfg.xml \
+		&& sed -i -e 's|\(<property name="connection.password">\).*\(</property>\)|\1'"$DATABASE_PASSWD"'\2|' pentaho-solutions/system/hibernate/${STORAGE_TYPE}.hibernate.cfg.xml \
+		&& sed -i -e 's|\(org.quartz.jobStore.driverDelegateClass\).*|\1 = org.quartz.impl.jdbcjobstore.StdJDBCDelegate|' pentaho-solutions/system/quartz/quartz.properties \
+		&& sed -i -e 's|@@DRIVER@@|'"$DATABASE_DRIVER"'|' pentaho-solutions/system/jackrabbit/repository.xml \
+		&& sed -i -e 's|@@URL@@|'"$DATABASE_REPOSITORY_URL"'|' pentaho-solutions/system/jackrabbit/repository.xml \
+		&& sed -i -e 's|@@USER@@|'"$DATABASE_USER"'|' pentaho-solutions/system/jackrabbit/repository.xml \
+		&& sed -i -e 's|@@PASSWD@@|'"$DATABASE_PASSWD"'|' pentaho-solutions/system/jackrabbit/repository.xml \
+		&& sed -i -e 's|@@DB_TYPE@@|'"$DATABASE_TYPE"'|' pentaho-solutions/system/jackrabbit/repository.xml \
+		&& cat <<< "<?xml version='1.0' encoding='UTF-8'?>
+<Context path='/pentaho' docbase='webapps/pentaho/'>
+	<Resource name='jdbc/Hibernate' auth='Container' type='javax.sql.DataSource'
+		factory='org.apache.commons.dbcp.BasicDataSourceFactory' maxActive='20' maxIdle='5'
+		maxWait='10000' username='${DATABASE_USER}' password='${DATABASE_PASSWD}'
+		driverClassName='${DATABASE_DRIVER}' url='${DATABASE_REPOSITORY_URL}'
+		validationQuery='${DATABASE_VALIDATION_QUERY}' />
+		
+	<Resource name='jdbc/Quartz' auth='Container' type='javax.sql.DataSource'
+		factory='org.apache.commons.dbcp.BasicDataSourceFactory' maxActive='20' maxIdle='5'
+		maxWait='10000' username='${DATABASE_USER}' password='${DATABASE_PASSWD}'
+		driverClassName='${DATABASE_DRIVER}' url='${DATABASE_QUARTZ_URL}'
+		validationQuery='${DATABASE_VALIDATION_QUERY}' />
+</Context>" > tomcat/webapps/pentaho/META-INF/context.xml
 }
 
 init_biserver() {
 	if [ ! -d $BISERVER_HOME/tomcat/logs/audit ]; then
-		echo "Creating temporary directories for tomcat..."
-		rm -rf tomcat/temp tomcat/work \
-			&& mkdir -p /tmp/osgi /tmp/tomcat/temp /tmp/tomcat/work tomcat/logs/audit pentaho-solutions/system/logs \
-			&& ln -s /tmp/tomcat/temp tomcat/temp \
-			&& ln -s /tmp/tomcat/work tomcat/work \
-			&& ln -s $BISERVER_HOME/tomcat/logs/audit $BISERVER_HOME/pentaho-solutions/system/logs/audit
-	fi
-
-	# only useful for testing / development purpose
-	# on production, you'll need to use external database like MySQL
-	if [ ! -f data/hsqldb/hibernate.properties ]; then
-		/bin/cp -rf data/.hsqldb/* data/hsqldb/. \
-			&& mkdir -p pentaho-solutions/system/karaf/data/log pentaho-solutions/system/karaf/data/tmp \
-			&& sed -i -e 's|\(CATALINA_OPTS=\)\(.*\)|# http://wiki.apache.org/tomcat/HowTo/FasterStartUp#Entropy_Source\n\1" -DKETTLE_HOME='"$KETTLE_HOME $BI_JAVA_OPTS"'"|' start-pentaho.sh \
+		echo "Initializing BI server..."
+		rm -rf /tmp/kettle tomcat/temp tomcat/work \
+			&& mkdir -p tmp/kettle tmp/osgi/cache tmp/osgi/data/log tmp/osgi/data/tmp tmp/tomcat/temp tmp/tomcat/work \
+				tomcat/logs/audit pentaho-solutions/system/logs \
+			&& ln -s $BISERVER_HOME/tmp/kettle /tmp/kettle \
+			&& ln -s $BISERVER_HOME/tmp/tomcat/temp tomcat/temp \
+			&& ln -s $BISERVER_HOME/tmp/tomcat/work tomcat/work \
+			&& ln -s $BISERVER_HOME/tomcat/logs/audit $BISERVER_HOME/pentaho-solutions/system/logs/audit \
+			&& ln -s $BISERVER_HOME/tmp/osgi/cache $BISERVER_HOME/pentaho-solutions/system/karaf/caches \
+			&& ln -s $BISERVER_HOME/tmp/osgi/data $BISERVER_HOME/pentaho-solutions/system/karaf/data \
+			&& sed -i -e 's|\(CATALINA_OPTS=\)\(.*\)|# http://wiki.apache.org/tomcat/HowTo/FasterStartUp#Entropy_Source\n  \1" -DKETTLE_HOME='"$KETTLE_HOME $BI_JAVA_OPTS"'"|' start-pentaho.sh \
 			&& sed -i -e 's|\(fully-qualified-server-url=\).*|\1'"$SERVER_URL"'|' pentaho-solutions/system/server.properties \
 			&& sed -i -e 's|\(locale-language=\).*|\1'"$LOCALE_LANGUAGE"'|' pentaho-solutions/system/server.properties \
 			&& sed -i -e 's|\(locale-country=\).*|\1'"$LOCALE_COUNTRY"'|' pentaho-solutions/system/server.properties \
@@ -68,7 +123,25 @@ init_biserver() {
 			#&& sed -i -e 's|\(respectStartLvlDuringFeatureStartup=\).*|\1true|' pentaho-solutions/system/karaf/etc/org.apache.karaf.features.cfg \
 			#&& sed -i -e 's|\(featuresBootAsynchronous=\).*|\1false|' pentaho-solutions/system/karaf/etc/org.apache.karaf.features.cfg \
 			#&& sed -i -e 's|\(,pdi-dataservice,pentaho-marketplace\)||' pentaho-solutions/system/karaf/etc/org.apache.karaf.features.cfg \
-	
+	fi
+
+	if [ "$STORAGE_TYPE" != "" ] && [ -f pentaho-solutions/system/hibernate/${STORAGE_TYPE}.hibernate.cfg.xml ]; then
+		sed -i -e 's|\(<!-- \[BEGIN HSQLDB DATABASES\]\).*|\1|' tomcat/webapps/pentaho/WEB-INF/web.xml \
+			&& sed -i -e 's|.*\(\[END HSQLDB DATABASES\] -->\)|\1|' tomcat/webapps/pentaho/WEB-INF/web.xml \
+			&& sed -i -e 's|\(<!-- \[BEGIN HSQLDB STARTER\]\).*|\1|' tomcat/webapps/pentaho/WEB-INF/web.xml \
+			&& sed -i -e 's|.*\(\[END HSQLDB STARTER\] -->\)|\1|' tomcat/webapps/pentaho/WEB-INF/web.xml
+		
+		if [ -f database.env ]; then
+			. database.env
+			
+			update_db
+		fi
+	else
+		# only useful for testing / development purpose
+		# on production, you'll need to use external database like MySQL
+		if [ ! -f data/hsqldb/hibernate.properties ]; then
+			/bin/cp -rf data/.hsqldb/* data/hsqldb/.
+		fi
 	fi
 }
 
@@ -85,11 +158,6 @@ apply_changes() {
 			/bin/cp -Rf $EXT_DIR/* .
 		fi
 	fi
-
-#	&& sed -i -e 's|\(<!-- \[BEGIN HSQLDB DATABASES\]\).*|\1|' tomcat/webapps/pentaho/WEB-INF/web.xml \
-#	&& sed -i -e 's|.*\(\[END HSQLDB DATABASES\] -->\)|\1|' tomcat/webapps/pentaho/WEB-INF/web.xml \
-#	&& sed -i -e 's|\(<!-- \[BEGIN HSQLDB STARTER\]\).*|\1|' tomcat/webapps/pentaho/WEB-INF/web.xml \
-#	&& sed -i -e 's|.*\(\[END HSQLDB STARTER\] -->\)|\1|' tomcat/webapps/pentaho/WEB-INF/web.xml
 }
 
 gen_kettle_config() {
@@ -157,7 +225,7 @@ if [ "$1" = 'biserver' ]; then
 	#sed -i -e 's|.*\(runtimeFeatures=\).*|\1'"ssh,http,war,kar,cxf"'|' system/karaf/etc-carte/org.pentaho.features.cfg 
 
 	# now start the bi server
-	su - pentaho -c ./start-pentaho.sh
+	su - $BISERVER_USER -c ./start-pentaho.sh
 fi
 
 exec "$@"

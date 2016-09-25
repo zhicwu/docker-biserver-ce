@@ -10,7 +10,8 @@ MAINTAINER Zhichun Wu <zhicwu@gmail.com>
 
 # Set Environment Variables
 ENV BISERVER_VERSION=6.1 BISERVER_BUILD=6.1.0.1-196 PDI_PATCH=6.1.0.1-SNAPSHOT \
-	BISERVER_HOME=/biserver-ce KETTLE_HOME=/biserver-ce/pentaho-solutions/system/kettle \
+	BISERVER_HOME=/biserver-ce BISERVER_USER=pentaho \
+	KETTLE_HOME=/biserver-ce/pentaho-solutions/system/kettle \
 	JNA_VERSION=4.2.2 OSHI_VERSION=3.2 \
 	MYSQL_DRIVER_VERSION=5.1.39 JTDS_VERSION=1.3.1 CASSANDRA_DRIVER_VERSION=0.6.1 \
 	XMLA_PROVIDER_VERSION=1.0.0.103
@@ -19,15 +20,16 @@ ENV BISERVER_VERSION=6.1 BISERVER_BUILD=6.1.0.1-196 PDI_PATCH=6.1.0.1-SNAPSHOT \
 RUN apt-get update \
 	&& apt-get install -y libjna-java libapr1-dev libssl-dev gcc make \
 	&& rm -rf /var/lib/apt/lists/* \
-	&& useradd -md $BISERVER_HOME -s /bin/bash pentaho
+	&& useradd -md $BISERVER_HOME -s /bin/bash $BISERVER_USER
 
 # Download Pentaho BI Server Community Edition and Unpack
 RUN wget --progress=dot:giga http://downloads.sourceforge.net/project/pentaho/Business%20Intelligence%20Server/${BISERVER_VERSION}/biserver-ce-${BISERVER_BUILD}.zip \
 	&& unzip -q *.zip \
 	&& rm -f *.zip
 
-# Add Entry Point
+# Add Entry Point and Templates
 COPY docker-entrypoint.sh $BISERVER_HOME/docker-entrypoint.sh
+COPY repository.xml.template $BISERVER_HOME/pentaho-solutions/system/jackrabbit/repository.xml.template
 
 # Switch Directory
 WORKDIR $BISERVER_HOME
@@ -139,9 +141,9 @@ RUN find . -name "*.bat" -delete \
 	&& sed -i -e 's|\(SSLEngine="\).*\("\)|\1off\2|' tomcat/conf/server.xml \
 	&& mv data/hsqldb data/.hsqldb \
 	&& chmod +x $BISERVER_HOME/*.sh \
-	&& chown -R pentaho:pentaho $BISERVER_HOME
+	&& chown -R $BISERVER_USER:$BISERVER_USER $BISERVER_HOME
 
-VOLUME ["$BISERVER_HOME/.pentaho", "$BISERVER_HOME/data/hsqldb", "$BISERVER_HOME/tomcat/logs", "$BISERVER_HOME/pentaho-solutions/system/jackrabbit/repository", "$BISERVER_HOME/pentaho-solutions/system/karaf/caches", "$BISERVER_HOME/pentaho-solutions/system/karaf/data", "/tmp"]
+VOLUME ["$BISERVER_HOME/.pentaho", "$BISERVER_HOME/data/hsqldb", "$BISERVER_HOME/tomcat/logs", "$BISERVER_HOME/pentaho-solutions/system/jackrabbit/repository", "$BISERVER_HOME/tmp"]
 
 ENTRYPOINT ["./docker-entrypoint.sh"]
 
