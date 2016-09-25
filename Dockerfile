@@ -27,7 +27,7 @@ RUN wget --progress=dot:giga http://downloads.sourceforge.net/project/pentaho/Bu
 	&& rm -f *.zip
 
 # Add Entry Point and Update ACL
-COPY docker-entrypoint.sh docker-entrypoint.sh
+COPY docker-entrypoint.sh $BISERVER_HOME/docker-entrypoint.sh
 RUN chmod +x *.sh \
 	&& chown -R pentaho:pentaho $BISERVER_HOME
 
