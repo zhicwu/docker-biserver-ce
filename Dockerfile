@@ -26,8 +26,9 @@ RUN wget --progress=dot:giga http://downloads.sourceforge.net/project/pentaho/Bu
 	&& unzip -q *.zip \
 	&& rm -f *.zip
 
-# Add Entry Point
+# Add Entry Point and Templates
 COPY docker-entrypoint.sh $BISERVER_HOME/docker-entrypoint.sh
+COPY repository.xml.template $BISERVER_HOME/pentaho-solutions/system/jackrabbit/repository.xml.template
 
 # Switch Directory
 WORKDIR $BISERVER_HOME
