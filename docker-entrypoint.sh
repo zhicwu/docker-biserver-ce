@@ -3,7 +3,7 @@ set -e
 
 : ${EXT_DIR:="/bi-ext"}
 
-: ${BI_JAVA_OPTS:='-Djava.security.egd=file:/dev/./urandom -Xms4096m -Xmx4096m -Djava.awt.headless=true -Dpentaho.karaf.root.transient=true -XX:+HeapDumpOnOutOfMemoryError -XX:ErrorFile=../logs/jvm_error_%p.log -XX:HeapDumpPath=../logs/ -verbose:gc -Xloggc:../logs/gc.log -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintHeapAtGC -Dsun.rmi.dgc.client.gcInterval=3600000 -Dsun.rmi.dgc.server.gcInterval=3600000 -Dfile.encoding=utf8 -DDI_HOME=\"$DI_HOME\"'}
+: ${BI_JAVA_OPTS:='-Djava.security.egd=file:/dev/./urandom -Xms4096m -Xmx4096m -Djava.awt.headless=true -Dpentaho.karaf.root.transient=true -XX:+HeapDumpOnOutOfMemoryError -XX:ErrorFile=../logs/jvm_error.log -XX:HeapDumpPath=../logs/ -verbose:gc -Xloggc:../logs/gc.log -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintHeapAtGC -Dsun.rmi.dgc.client.gcInterval=3600000 -Dsun.rmi.dgc.server.gcInterval=3600000 -Dfile.encoding=utf8 -DDI_HOME=\"$DI_HOME\"'}
 
 : ${PDI_HADOOP_CONFIG:="hdp23"}
 
@@ -18,11 +18,36 @@ set -e
 : ${LOCALE_LANGUAGE:="en"}
 : ${LOCALE_COUNTRY:="US"}
 
+: ${HOST_USER_ID:="1000"}
+
+fix_permission() {
+	# based on https://github.com/schmidigital/permission-fix/blob/master/tools/permission_fix
+	DOCKER_USER='pentaho'
+	UNUSED_USER_ID=21338
+
+	echo "Fixing permissions..."
+
+	# Setting User Permissions
+	DOCKER_USER_CURRENT_ID=`id -u $DOCKER_USER`
+
+	if [ "$DOCKER_USER_CURRENT_ID" != "$HOST_USER_ID" ]; then
+	  DOCKER_USER_OLD=`getent passwd $HOST_USER_ID | cut -d: -f1`
+
+	  if [ ! -z "$DOCKER_USER_OLD" ]; then
+		usermod -o -u $UNUSED_USER_ID $DOCKER_USER_OLD
+	  fi
+
+	  usermod -o -u $HOST_USER_ID $DOCKER_USER || true
+	fi
+	
+	chown -R $DOCKER_USER:$DOCKER_USER $BISERVER_HOME /tmp/*
+}
+
 init_biserver() {
-	if [ ! -d /tmp/tomcat ] || [ ! -d /tmp/tomcat/temp ] || [ ! -d /tmp/tomcat/work ] || [ ! -d $BISERVER_HOME/tomcat/logs/audit ]; then
+	if [ ! -d $BISERVER_HOME/tomcat/logs/audit ]; then
 		echo "Creating temporary directories for tomcat..."
 		rm -rf tomcat/temp tomcat/work \
-			&& mkdir -p /tmp/tomcat/temp /tmp/tomcat/work tomcat/logs/audit pentaho-solutions/system/logs \
+			&& mkdir -p /tmp/osgi /tmp/tomcat/temp /tmp/tomcat/work tomcat/logs/audit pentaho-solutions/system/logs \
 			&& ln -s /tmp/tomcat/temp tomcat/temp \
 			&& ln -s /tmp/tomcat/work tomcat/work \
 			&& ln -s $BISERVER_HOME/tomcat/logs/audit $BISERVER_HOME/pentaho-solutions/system/logs/audit
@@ -39,6 +64,11 @@ init_biserver() {
 			&& sed -i -e 's|\(locale-country=\).*|\1'"$LOCALE_COUNTRY"'|' pentaho-solutions/system/server.properties \
 			&& sed -i -e 's|\(<value>\)false\(</value>\)|\1true\2|' pentaho-solutions/system/systemListeners.xml \
 			&& sed -i 's/^\(active.hadoop.configuration=\).*/\1'"$PDI_HADOOP_CONFIG"'/' $KETTLE_HOME/plugins/pentaho-big-data-plugin/plugin.properties
+			#&& sed -i -e 's|\(,mvn:pentaho-karaf-features/pentaho-big-data-plugin-osgi/6.1.0.1-196/xml/features\)||' pentaho-solutions/system/karaf/etc/org.apache.karaf.features.cfg \
+			#&& sed -i -e 's|\(respectStartLvlDuringFeatureStartup=\).*|\1true|' pentaho-solutions/system/karaf/etc/org.apache.karaf.features.cfg \
+			#&& sed -i -e 's|\(featuresBootAsynchronous=\).*|\1false|' pentaho-solutions/system/karaf/etc/org.apache.karaf.features.cfg \
+			#&& sed -i -e 's|\(,pdi-dataservice,pentaho-marketplace\)||' pentaho-solutions/system/karaf/etc/org.apache.karaf.features.cfg \
+	
 	fi
 }
 
@@ -119,13 +149,15 @@ if [ "$1" = 'biserver' ]; then
 	gen_kettle_config
 	apply_changes
 
+	fix_permission
+	
 	# update configuration based on environment variables
 	# send log output to stdout
 	#sed -i 's/^\(.*rootLogger.*\), *out *,/\1, stdout,/' system/karaf/etc/org.ops4j.pax.logging.cfg
 	#sed -i -e 's|.*\(runtimeFeatures=\).*|\1'"ssh,http,war,kar,cxf"'|' system/karaf/etc-carte/org.pentaho.features.cfg 
 
 	# now start the bi server
-	./start-pentaho.sh
+	su - pentaho -c ./start-pentaho.sh
 fi
 
 exec "$@"

@@ -11,15 +11,25 @@ MAINTAINER Zhichun Wu <zhicwu@gmail.com>
 # Set Environment Variables
 ENV BISERVER_VERSION=6.1 BISERVER_BUILD=6.1.0.1-196 PDI_PATCH=6.1.0.1-SNAPSHOT \
 	BISERVER_HOME=/biserver-ce KETTLE_HOME=/biserver-ce/pentaho-solutions/system/kettle \
+	JNA_VERSION=4.2.2 OSHI_VERSION=3.2 \
 	MYSQL_DRIVER_VERSION=5.1.39 JTDS_VERSION=1.3.1 CASSANDRA_DRIVER_VERSION=0.6.1 \
 	XMLA_PROVIDER_VERSION=1.0.0.103
 
-# Download Pentaho BI Server Community Edition
-RUN wget --progress=dot:giga http://downloads.sourceforge.net/project/pentaho/Business%20Intelligence%20Server/${BISERVER_VERSION}/biserver-ce-${BISERVER_BUILD}.zip
+# Install Required Packages and Add User
+RUN apt-get update \
+	&& apt-get install -y libjna-java libapr1-dev libssl-dev gcc make \
+	&& rm -rf /var/lib/apt/lists/* \
+	&& useradd -md $BISERVER_HOME -s /bin/bash pentaho
 
-# Unpack BI Server 
-RUN unzip -q *.zip && rm -f *.zip
+# Download Pentaho BI Server Community Edition and Unpack
+RUN wget --progress=dot:giga http://downloads.sourceforge.net/project/pentaho/Business%20Intelligence%20Server/${BISERVER_VERSION}/biserver-ce-${BISERVER_BUILD}.zip \
+	&& unzip -q *.zip \
+	&& rm -f *.zip
 
+# Add Entry Point
+COPY docker-entrypoint.sh $BISERVER_HOME/docker-entrypoint.sh
+
+# Switch Directory
 WORKDIR $BISERVER_HOME
 
 # Download Patches / Plugins
@@ -51,16 +61,13 @@ RUN wget --progress=dot:giga http://central.maven.org/maven2/mysql/mysql-connect
 	&& mv *.jar tomcat/lib/.
 
 # Compile and Install Tomcat Native Lib
-RUN apt-get update \
-	&& apt-get install -y libjna-java libapr1-dev libssl-dev gcc make \
-	&& tar zxvf tomcat/bin/tomcat-native.tar.gz \
+RUN tar zxvf tomcat/bin/tomcat-native.tar.gz \
 	&& cd tomcat-native*/native \
 	&& ./configure --with-apr=/usr/bin/apr-config --disable-openssl --with-java-home=$JAVA_HOME --prefix=$BISERVER_HOME/tomcat \
 	&& make \
 	&& make install \
 	&& cd ../.. \
-	&& rm -rf tomcat-native* \
-	&& rm -rf /var/lib/apt/lists/*
+	&& rm -rf tomcat-native*
 
 # Download and Apply Clustering Workaround
 RUN wget --progress=dot:giga https://github.com/zhicwu/pdi-cluster/releases/download/${PDI_PATCH}/pentaho-kettle-${PDI_PATCH}.jar \
@@ -83,9 +90,9 @@ RUN wget --progress=dot:giga https://github.com/zhicwu/pdi-cluster/releases/down
 	&& $JAVA_HOME/bin/jar uf ../tomcat/webapps/pentaho/WEB-INF/lib/pentaho-platform-scheduler-${BISERVER_BUILD}.jar org/pentaho/platform/scheduler2/quartz \
 	&& cd .. \
 	&& rm -rf patches *.jar \
-	&& wget https://maven.java.net/content/repositories/releases/net/java/dev/jna/jna/4.2.2/jna-4.2.2.jar \
-		https://maven.java.net/content/repositories/releases/net/java/dev/jna/jna-platform/4.2.2/jna-platform-4.2.2.jar \
-		http://central.maven.org/maven2/com/github/dblock/oshi-core/3.2/oshi-core-3.2.jar \
+	&& wget https://maven.java.net/content/repositories/releases/net/java/dev/jna/jna/$JNA_VERSION/jna-$JNA_VERSION.jar \
+		https://maven.java.net/content/repositories/releases/net/java/dev/jna/jna-platform/$JNA_VERSION/jna-platform-$JNA_VERSION.jar \
+		http://central.maven.org/maven2/com/github/dblock/oshi-core/$OSHI_VERSION/oshi-core-$OSHI_VERSION.jar \
 	&& mv *.jar tomcat/webapps/pentaho/WEB-INF/lib/.
 
 # Configure BI Server, Remove External References and Patch Saiku Plugin
@@ -130,13 +137,12 @@ RUN find . -name "*.bat" -delete \
 	&& sed -i -e 's|http://meteorite.bi/|/|' pentaho-solutions/system/saiku/ui/saiku.min.js \
 	&& sed -i -e "s|\(request.setRequestHeader('Authorization', auth);\)|// \1|" pentaho-solutions/system/saiku/ui/js/saiku/embed/SaikuEmbed.js \
 	&& sed -i -e 's|\(SSLEngine="\).*\("\)|\1off\2|' tomcat/conf/server.xml \
-	&& sed -i -e 's|\(,pdi-dataservice\)||' pentaho-solutions/system/karaf/etc/org.apache.karaf.features.cfg \
-	&& mv data/hsqldb data/.hsqldb
+	&& mv data/hsqldb data/.hsqldb \
+	&& chmod +x $BISERVER_HOME/*.sh \
+	&& chown -R pentaho:pentaho $BISERVER_HOME
 
-VOLUME ["$BISERVER_HOME/data/hsqldb", "$BISERVER_HOME/tomcat/logs", "$BISERVER_HOME/pentaho-solutions/system/karaf/caches", "$BISERVER_HOME/pentaho-solutions/system/karaf/data", "/tmp"]
+VOLUME ["$BISERVER_HOME/.pentaho", "$BISERVER_HOME/data/hsqldb", "$BISERVER_HOME/tomcat/logs", "$BISERVER_HOME/pentaho-solutions/system/jackrabbit/repository", "$BISERVER_HOME/pentaho-solutions/system/karaf/caches", "$BISERVER_HOME/pentaho-solutions/system/karaf/data", "/tmp"]
 
-COPY docker-entrypoint.sh docker-entrypoint.sh
-RUN chmod +x *.sh
 ENTRYPOINT ["./docker-entrypoint.sh"]
 
 #  8080 - HTTP
