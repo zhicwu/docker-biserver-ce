@@ -21,7 +21,7 @@ set -e
 : ${HOST_USER_ID:="1000"}
 
 fix_permission() {
-	# shamelessly copied from https://github.com/schmidigital/permission-fix/blob/master/tools/permission_fix
+	# based on https://github.com/schmidigital/permission-fix/blob/master/tools/permission_fix
 	DOCKER_USER='pentaho'
 	UNUSED_USER_ID=21338
 
@@ -30,23 +30,14 @@ fix_permission() {
 	# Setting User Permissions
 	DOCKER_USER_CURRENT_ID=`id -u $DOCKER_USER`
 
-	if [ $DOCKER_USER_CURRENT_ID -eq $HOST_USER_ID ]; then
-	  echo "User $DOCKER_USER is already mapped to $DOCKER_USER_CURRENT_ID. Nice!"
-	else
-	  echo "Check if user with ID $HOST_USER_ID already exists"
+	if [ "$DOCKER_USER_CURRENT_ID" != "$HOST_USER_ID" ]; then
 	  DOCKER_USER_OLD=`getent passwd $HOST_USER_ID | cut -d: -f1`
 
-	  if [ -z "$DOCKER_USER_OLD" ]; then
-		echo "User ID is free. Good."
-	  else
-		echo "User ID is already taken by user: $DOCKER_USER_OLD"
-		echo "Changing the ID of $DOCKER_USER_OLD to $UNUSED_USER_ID"
+	  if [ ! -z "$DOCKER_USER_OLD" ]; then
 		usermod -o -u $UNUSED_USER_ID $DOCKER_USER_OLD
 	  fi
 
-	  echo "Changing the ID of $DOCKER_USER user to $HOST_USER_ID"
 	  usermod -o -u $HOST_USER_ID $DOCKER_USER || true
-	  echo "Finished"
 	fi
 	
 	chown -R $DOCKER_USER:$DOCKER_USER $BISERVER_HOME /tmp/*
@@ -56,7 +47,7 @@ init_biserver() {
 	if [ ! -d $BISERVER_HOME/tomcat/logs/audit ]; then
 		echo "Creating temporary directories for tomcat..."
 		rm -rf tomcat/temp tomcat/work \
-			&& mkdir -p /tmp/tomcat/temp /tmp/tomcat/work tomcat/logs/audit pentaho-solutions/system/logs \
+			&& mkdir -p /tmp/osgi /tmp/tomcat/temp /tmp/tomcat/work tomcat/logs/audit pentaho-solutions/system/logs \
 			&& ln -s /tmp/tomcat/temp tomcat/temp \
 			&& ln -s /tmp/tomcat/work tomcat/work \
 			&& ln -s $BISERVER_HOME/tomcat/logs/audit $BISERVER_HOME/pentaho-solutions/system/logs/audit

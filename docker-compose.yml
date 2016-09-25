@@ -21,7 +21,7 @@ services:
       - ./data/tmp:/tmp:rw
     environment:
       BI_JAVA_OPTS: '${BI_JAVA_OPTS}'
-      HOST_USER_ID: ${UID}
+      HOST_USER_ID: ${HOST_USER_ID}
       PDI_HADOOP_CONFIG: ${PDI_HADOOP_CONFIG}
       PDI_MAX_LOG_LINES: ${PDI_MAX_LOG_LINES}
       PDI_MAX_LOG_TIMEOUT: ${PDI_MAX_LOG_TIMEOUT}
