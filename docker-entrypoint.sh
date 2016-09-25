@@ -3,7 +3,7 @@ set -e
 
 : ${EXT_DIR:="/bi-ext"}
 
-: ${BI_JAVA_OPTS:='-Djava.security.egd=file:/dev/./urandom -Xms4096m -Xmx4096m -Djava.awt.headless=true -Dpentaho.karaf.root.transient=true -XX:+HeapDumpOnOutOfMemoryError -XX:ErrorFile=../logs/jvm_error_%p.log -XX:HeapDumpPath=../logs/ -verbose:gc -Xloggc:../logs/gc.log -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintHeapAtGC -Dsun.rmi.dgc.client.gcInterval=3600000 -Dsun.rmi.dgc.server.gcInterval=3600000 -Dfile.encoding=utf8 -DDI_HOME=\"$DI_HOME\"'}
+: ${BI_JAVA_OPTS:='-Djava.security.egd=file:/dev/./urandom -Xms4096m -Xmx4096m -Djava.awt.headless=true -Dpentaho.karaf.root.transient=true -XX:+HeapDumpOnOutOfMemoryError -XX:ErrorFile=../logs/jvm_error.log -XX:HeapDumpPath=../logs/ -verbose:gc -Xloggc:../logs/gc.log -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintHeapAtGC -Dsun.rmi.dgc.client.gcInterval=3600000 -Dsun.rmi.dgc.server.gcInterval=3600000 -Dfile.encoding=utf8 -DDI_HOME=\"$DI_HOME\"'}
 
 : ${PDI_HADOOP_CONFIG:="hdp23"}
 
@@ -18,8 +18,69 @@ set -e
 : ${LOCALE_LANGUAGE:="en"}
 : ${LOCALE_COUNTRY:="US"}
 
+: ${DOCKER_GROUP:="pentaho"}
+: ${DOCKER_USER:="pentaho"}
+
+map_user() {
+	# shamelessly copied from https://github.com/schmidigital/permission-fix/blob/master/tools/permission_fix
+	UNUSED_USER_ID=21338
+	UNUSED_GROUP_ID=21337
+
+	echo "Fixing permissions..."
+
+	# Setting Group Permissions
+	DOCKER_GROUP_CURRENT_ID=`id -g $DOCKER_GROUP`
+
+	if [ $DOCKER_GROUP_CURRENT_ID -eq $HOST_GROUP_ID ]; then
+	  echo "Group $DOCKER_GROUP is already mapped to $DOCKER_GROUP_CURRENT_ID. Nice!"
+	else
+	  echo "Check if group with ID $HOST_GROUP_ID already exists"
+	  DOCKER_GROUP_OLD=`getent group $HOST_GROUP_ID | cut -d: -f1`
+
+	  if [ -z "$DOCKER_GROUP_OLD" ]; then
+		echo "Group ID is free. Good."
+	  else
+		echo "Group ID is already taken by group: $DOCKER_GROUP_OLD"
+
+		echo "Changing the ID of $DOCKER_GROUP_OLD group to UNUSED_GROUP_ID"
+		groupmod -o -g $UNUSED_GROUP_ID $DOCKER_GROUP_OLD
+	  fi
+
+	  echo "Changing the ID of $DOCKER_GROUP group to $HOST_GROUP_ID"
+	  groupmod -o -g $HOST_GROUP_ID $DOCKER_GROUP || true
+	  echo "Finished"
+	  echo "-- -- -- -- --"
+	fi
+
+	# Setting User Permissions
+	DOCKER_USER_CURRENT_ID=`id -u $DOCKER_USER`
+
+	if [ $DOCKER_USER_CURRENT_ID -eq $HOST_USER_ID ]; then
+	  echo "User $DOCKER_USER is already mapped to $DOCKER_USER_CURRENT_ID. Nice!"
+
+	else
+	  echo "Check if user with ID $HOST_USER_ID already exists"
+	  DOCKER_USER_OLD=`getent passwd $HOST_USER_ID | cut -d: -f1`
+
+	  if [ -z "$DOCKER_USER_OLD" ]; then
+		echo "User ID is free. Good."
+	  else
+		echo "User ID is already taken by user: $DOCKER_USER_OLD"
+
+		echo "Changing the ID of $DOCKER_USER_OLD to $UNUSED_USER_ID"
+		usermod -o -u $UNUSED_USER_ID $DOCKER_USER_OLD
+	  fi
+
+	  echo "Changing the ID of $DOCKER_USER user to $HOST_USER_ID"
+	  usermod -o -u $HOST_USER_ID $DOCKER_USER || true
+	  echo "Finished"
+	fi
+}
+
 init_biserver() {
 	if [ ! -d $BISERVER_HOME/tomcat/logs/audit ]; then
+		map_user
+		
 		echo "Creating temporary directories for tomcat..."
 		rm -rf tomcat/temp tomcat/work \
 			&& mkdir -p /tmp/tomcat/temp /tmp/tomcat/work tomcat/logs/audit pentaho-solutions/system/logs \
@@ -39,15 +100,11 @@ init_biserver() {
 			&& sed -i -e 's|\(locale-country=\).*|\1'"$LOCALE_COUNTRY"'|' pentaho-solutions/system/server.properties \
 			&& sed -i -e 's|\(<value>\)false\(</value>\)|\1true\2|' pentaho-solutions/system/systemListeners.xml \
 			&& sed -i 's/^\(active.hadoop.configuration=\).*/\1'"$PDI_HADOOP_CONFIG"'/' $KETTLE_HOME/plugins/pentaho-big-data-plugin/plugin.properties
+			#&& sed -i -e 's|\(,mvn:pentaho-karaf-features/pentaho-big-data-plugin-osgi/6.1.0.1-196/xml/features\)||' pentaho-solutions/system/karaf/etc/org.apache.karaf.features.cfg \
 			#&& sed -i -e 's|\(respectStartLvlDuringFeatureStartup=\).*|\1true|' pentaho-solutions/system/karaf/etc/org.apache.karaf.features.cfg \
 			#&& sed -i -e 's|\(featuresBootAsynchronous=\).*|\1false|' pentaho-solutions/system/karaf/etc/org.apache.karaf.features.cfg \
 			#&& sed -i -e 's|\(,pdi-dataservice,pentaho-marketplace\)||' pentaho-solutions/system/karaf/etc/org.apache.karaf.features.cfg \
 	
-	fi
-	
-	if [ ! -d ~/.pentaho ]; then
-		echo "Creating pentaho directory..."
-		ln -s $BISERVER_HOME/.pentaho ~/.pentaho
 	fi
 }
 
