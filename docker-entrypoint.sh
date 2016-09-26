@@ -124,7 +124,23 @@ init_biserver() {
 			#&& sed -i -e 's|\(featuresBootAsynchronous=\).*|\1false|' pentaho-solutions/system/karaf/etc/org.apache.karaf.features.cfg \
 			#&& sed -i -e 's|\(,pdi-dataservice,pentaho-marketplace\)||' pentaho-solutions/system/karaf/etc/org.apache.karaf.features.cfg \
 	fi
+}
 
+apply_changes() {
+	# you can mount a volume pointing to /pdi-ext for customization
+	if [ -d $EXT_DIR ]; then
+		# if you have custom scripts to run, let's do it
+		if [ -f $EXT_DIR/custom_install.sh ]; then
+			echo "Running custom installation script..."
+			. $EXT_DIR/custom_install.sh
+		# otherwise, simply override files based what we have under ext directory
+		elif [ "$(ls -A $EXT_DIR)" ]; then
+			echo "Copying files from $EXT_DIR to $BISERVER_HOME..."
+			/bin/cp -Rf $EXT_DIR/* .
+		fi
+	fi
+	
+	# update database configuration as required
 	if [ "$STORAGE_TYPE" != "" ] && [ -f pentaho-solutions/system/hibernate/${STORAGE_TYPE}.hibernate.cfg.xml ]; then
 		sed -i -e 's|\(<!-- \[BEGIN HSQLDB DATABASES\]\).*|\1|' tomcat/webapps/pentaho/WEB-INF/web.xml \
 			&& sed -i -e 's|.*\(\[END HSQLDB DATABASES\] -->\)|\1|' tomcat/webapps/pentaho/WEB-INF/web.xml \
@@ -141,21 +157,6 @@ init_biserver() {
 		# on production, you'll need to use external database like MySQL
 		if [ ! -f data/hsqldb/hibernate.properties ]; then
 			/bin/cp -rf data/.hsqldb/* data/hsqldb/.
-		fi
-	fi
-}
-
-apply_changes() {
-	# you can mount a volume pointing to /pdi-ext for customization
-	if [ -d $EXT_DIR ]; then
-		# if you have custom scripts to run, let's do it
-		if [ -f $EXT_DIR/custom_install.sh ]; then
-			echo "Running custom installation script..."
-			. $EXT_DIR/custom_install.sh
-		# otherwise, simply override files based what we have under ext directory
-		elif [ "$(ls -A $EXT_DIR)" ]; then
-			echo "Copying files from $EXT_DIR to $BISERVER_HOME..."
-			/bin/cp -Rf $EXT_DIR/* .
 		fi
 	fi
 }
