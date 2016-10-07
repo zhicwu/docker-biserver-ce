@@ -60,7 +60,10 @@ RUN wget --progress=dot:giga http://central.maven.org/maven2/mysql/mysql-connect
 		http://central.maven.org/maven2/com/github/zhicwu/cassandra-jdbc-driver/${CASSANDRA_DRIVER_VERSION}/cassandra-jdbc-driver-${CASSANDRA_DRIVER_VERSION}-shaded.jar \
 	&& wget --progress=dot:giga -O tomcat/webapps/pentaho/docs/xmla-connector.exe https://sourceforge.net/projects/xmlaconnect/files/XMLA_Provider_v${XMLA_PROVIDER_VERSION}.exe/download \
 	&& rm -f tomcat/lib/mysql*.jar tomcat/lib/jtds*.jar \
-	&& mv *.jar tomcat/lib/.
+	&& mv *.jar tomcat/lib/. \
+	&& wget --progress=dot:giga -P tomcat/webapps/pentaho/WEB-INF/lib http://central.maven.org/maven2/com/mchange/c3p0/0.9.5.2/c3p0-0.9.5.2.jar \
+		http://central.maven.org/maven2/com/mchange/mchange-commons-java/0.2.11/mchange-commons-java-0.2.11.jar \
+	&& sed -i -e 's|\(<session-factory>\).*|\1\n    <property name="connection.provider_class">org.hibernate.connection.C3P0ConnectionProvider</property>\n    <property name="hibernate.c3p0.acquire_increment">1</property>\n    <property name="hibernate.c3p0.idle_test_period">0</property>\n    <property name="hibernate.c3p0.min_size">3</property>\n    <property name="hibernate.c3p0.max_size">8</property>\n    <property name="hibernate.c3p0.timeout">300</property>\n    <property name="hibernate.c3p0.preferredTestQuery">select 1</property>\n    <property name="hibernate.c3p0.testConnectionOnCheckout">true</property>\n|' pentaho-solutions/system/hibernate/*.hibernate.cfg.xml
 
 # Compile and Install Tomcat Native Lib
 RUN tar zxvf tomcat/bin/tomcat-native.tar.gz \

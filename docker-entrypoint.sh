@@ -148,9 +148,12 @@ apply_changes() {
 			&& sed -i -e 's|.*\(\[END HSQLDB STARTER\] -->\)|\1|' tomcat/webapps/pentaho/WEB-INF/web.xml
 		
 		if [ -f database.env ]; then
+			echo "Updating database configuration..."
 			. database.env
 			
 			update_db
+		else
+			echo "Skip database configuration as database.env is not available"
 		fi
 	else
 		# only useful for testing / development purpose
