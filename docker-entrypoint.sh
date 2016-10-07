@@ -69,13 +69,13 @@ update_db() {
 		&& sed -i -e 's|\(jdbc.password=\).*|\1'"$DATABASE_PASSWD"'|' pentaho-solutions/system/applicationContext-spring-security-hibernate.properties \
 		&& sed -i -e 's|\(hibernate.dialect=\).*|\1'"$DATABASE_DIALECT"'|' pentaho-solutions/system/applicationContext-spring-security-hibernate.properties \
 		&& sed -i -e 's|\(datasource.driver.classname=\).*|\1'"$DATABASE_DRIVER"'|' pentaho-solutions/system/applicationContext-spring-security-jdbc.properties \
-		&& sed -i -e 's|\(datasource.url=\).*|\1'"$DATABASE_REPOSITORY_URL"'|' pentaho-solutions/system/applicationContext-spring-security-jdbc.properties \
+		&& sed -i -e 's|\(datasource.url=\).*|\1'"$DATABASE_HIBERNATE_URL"'|' pentaho-solutions/system/applicationContext-spring-security-jdbc.properties \
 		&& sed -i -e 's|\(datasource.username=\).*|\1'"$DATABASE_USER"'|' pentaho-solutions/system/applicationContext-spring-security-jdbc.properties \
 		&& sed -i -e 's|\(datasource.password=\).*|\1'"$DATABASE_PASSWD"'|' pentaho-solutions/system/applicationContext-spring-security-jdbc.properties \
 		&& sed -i -e 's|\(datasource.validation.query=\).*|\1'"$DATABASE_VALIDATION_QUERY"'|' pentaho-solutions/system/applicationContext-spring-security-jdbc.properties \
 		&& sed -i -e 's|\(<config-file>\).*\(</config-file>\)|\1system/hibernate/'"$STORAGE_TYPE"'.hibernate.cfg.xml\2|' pentaho-solutions/system/hibernate/hibernate-settings.xml \
 		&& sed -i -e 's|\(<property name="connection.driver_class">\).*\(</property>\)|\1'"$DATABASE_DRIVER"'\2|' pentaho-solutions/system/hibernate/${STORAGE_TYPE}.hibernate.cfg.xml \
-		&& sed -i -e 's|\(<property name="connection.url">\).*\(</property>\)|\1'"$DATABASE_REPOSITORY_URL"'\2|' pentaho-solutions/system/hibernate/${STORAGE_TYPE}.hibernate.cfg.xml \
+		&& sed -i -e 's|\(<property name="connection.url">\).*\(</property>\)|\1'"$DATABASE_HIBERNATE_URL"'\2|' pentaho-solutions/system/hibernate/${STORAGE_TYPE}.hibernate.cfg.xml \
 		&& sed -i -e 's|\(<property name="dialect">\).*\(</property>\)|\1'"$DATABASE_DIALECT"'\2|' pentaho-solutions/system/hibernate/${STORAGE_TYPE}.hibernate.cfg.xml \
 		&& sed -i -e 's|\(<property name="connection.username">\).*\(</property>\)|\1'"$DATABASE_USER"'\2|' pentaho-solutions/system/hibernate/${STORAGE_TYPE}.hibernate.cfg.xml \
 		&& sed -i -e 's|\(<property name="connection.password">\).*\(</property>\)|\1'"$DATABASE_PASSWD"'\2|' pentaho-solutions/system/hibernate/${STORAGE_TYPE}.hibernate.cfg.xml \
@@ -90,7 +90,7 @@ update_db() {
 	<Resource name='jdbc/Hibernate' auth='Container' type='javax.sql.DataSource'
 		factory='org.apache.commons.dbcp.BasicDataSourceFactory' maxActive='20' maxIdle='5'
 		maxWait='10000' username='${DATABASE_USER}' password='${DATABASE_PASSWD}'
-		driverClassName='${DATABASE_DRIVER}' url='${DATABASE_REPOSITORY_URL}'
+		driverClassName='${DATABASE_DRIVER}' url='${DATABASE_HIBERNATE_URL}'
 		validationQuery='${DATABASE_VALIDATION_QUERY}' />
 		
 	<Resource name='jdbc/Quartz' auth='Container' type='javax.sql.DataSource'
