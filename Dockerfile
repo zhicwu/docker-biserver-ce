@@ -146,7 +146,7 @@ RUN find . -name "*.bat" -delete \
 
 VOLUME ["$BISERVER_HOME/.pentaho", "$BISERVER_HOME/data/hsqldb", "$BISERVER_HOME/tomcat/logs", "$BISERVER_HOME/pentaho-solutions/system/jackrabbit/repository", "$BISERVER_HOME/tmp"]
 
-ENTRYPOINT ["./docker-entrypoint.sh"]
+ENTRYPOINT ["/sbin/my_init", "--", "./docker-entrypoint.sh"]
 
 #  8080 - HTTP
 #  8009 - AJP

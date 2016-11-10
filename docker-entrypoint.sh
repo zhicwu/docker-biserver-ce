@@ -183,6 +183,9 @@ gen_kettle_config() {
 KETTLE_EMPTY_STRING_DIFFERS_FROM_NULL=Y
 KETTLE_FORCED_SSL=Y
 
+# Less memory consumption, hopefully
+KETTLE_STEP_PERFORMANCE_SNAPSHOT_LIMIT=1
+
 # Master Detector ( start in 1 second, and repeat detection every 10 seconds)
 #KETTLE_MASTER_DETECTOR_INITIAL_DELAY=1000
 #KETTLE_MASTER_DETECTOR_REFRESH_INTERVAL=10000
@@ -230,7 +233,7 @@ if [ "$1" = 'biserver' ]; then
 	#sed -i -e 's|.*\(runtimeFeatures=\).*|\1'"ssh,http,war,kar,cxf"'|' system/karaf/etc-carte/org.pentaho.features.cfg 
 
 	# now start the bi server
-	su - $BISERVER_USER -c ./start-pentaho.sh
+	exec /sbin/setuser $BISERVER_USER $BISERVER_HOME/start-pentaho.sh
 fi
 
 exec "$@"
