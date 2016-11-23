@@ -12,11 +12,11 @@ services:
       - "${SERVER_AJP_PORT}:8009"
     volumes:
       - ./ext:/bi-ext:ro
-      - ./data/.pentaho:/biserver-ce/.pentaho:rw
-      - ./data/hsqldb:/biserver-ce/data/hsqldb:rw
-      - ./data/logs:/biserver-ce/tomcat/logs:rw
-      - ./data/repository:/biserver-ce/pentaho-solutions/system/jackrabbit/repository:rw
-      - ./data/tmp:/biserver-ce/tmp:rw
+      - ./data/.pentaho:/pentaho-server/.pentaho:rw
+      - ./data/hsqldb:/pentaho-server/data/hsqldb:rw
+      - ./data/logs:/pentaho-server/tomcat/logs:rw
+      - ./data/repository:/pentaho-server/pentaho-solutions/system/jackrabbit/repository:rw
+      - ./data/tmp:/pentaho-server/tmp:rw
     environment:
       BI_JAVA_OPTS: '${BI_JAVA_OPTS}'
       HOST_USER_ID: ${HOST_USER_ID}
