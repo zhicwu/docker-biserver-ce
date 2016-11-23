@@ -9,9 +9,9 @@ FROM zhicwu/java:8
 MAINTAINER Zhichun Wu <zhicwu@gmail.com>
 
 # Set Environment Variables
-ENV BISERVER_VERSION=6.1 BISERVER_BUILD=6.1.0.1-196 PDI_PATCH=6.1.0.1-SNAPSHOT \
-	BISERVER_HOME=/biserver-ce BISERVER_USER=pentaho \
-	KETTLE_HOME=/biserver-ce/pentaho-solutions/system/kettle \
+ENV BISERVER_VERSION=7.0 BISERVER_BUILD=7.0.0.0-25 PDI_PATCH=7.0.0.0-SNAPSHOT \
+	BISERVER_HOME=/pentaho-server BISERVER_USER=pentaho \
+	KETTLE_HOME=/pentaho-server/pentaho-solutions/system/kettle \
 	JNA_VERSION=4.2.2 OSHI_VERSION=3.2 \
 	MYSQL_DRIVER_VERSION=5.1.40 JTDS_VERSION=1.3.1 CASSANDRA_DRIVER_VERSION=0.6.1 \
 	XMLA_PROVIDER_VERSION=1.0.0.103
@@ -23,7 +23,7 @@ RUN apt-get update \
 	&& useradd -md $BISERVER_HOME -s /bin/bash $BISERVER_USER
 
 # Download Pentaho BI Server Community Edition and Unpack
-RUN wget --progress=dot:giga http://downloads.sourceforge.net/project/pentaho/Business%20Intelligence%20Server/${BISERVER_VERSION}/biserver-ce-${BISERVER_BUILD}.zip \
+RUN wget --progress=dot:giga http://downloads.sourceforge.net/project/pentaho/Business%20Intelligence%20Server/${BISERVER_VERSION}/pentaho-server-ce-${BISERVER_BUILD}.zip \
 	&& unzip -q *.zip \
 	&& rm -f *.zip
 
@@ -35,20 +35,11 @@ COPY repository.xml.template $BISERVER_HOME/pentaho-solutions/system/jackrabbit/
 WORKDIR $BISERVER_HOME
 
 # Download Patches / Plugins
-# Audit: https://github.com/it4biz/pentaho-ce-audit/releases/download/2016.05.19/pentaho-ce-audit-2016.05.19.zip \
-# CLP: http://www.webdetails.pt/ficheiros/CLP/CLP-15.10.21.zip \
-# CST: http://ctools.pentaho.com/files/cst/16.04.06/cst-16.04.06.zip \
-# FusionCharts: http://www.xpand-it.com/images/files/fusioncharts/fusion_plugin-4.1.1.zip \
-# Performance: http://downloads.sourceforge.net/project/pentaho-performance-monitoring/1.0/pentaho-performance-monitoring-2015.02.06-TRUNK.zip
-# Pivot4J: http://ci.greencatsoft.com/job/Pivot4J/397/artifact/pivot4j-pentaho/target/pivot4j-pentaho-1.0-SNAPSHOT-plugin.zip \
-# Repo Sync: http://ctools.pentaho.com/files/repositorySynchronizer/15.10.21/repositorySynchronizer-15.10.21.zip \
-# Tapa: https://github.com/marpontes/tapa/releases/download/v0.3.1/tapa-0.3.1-pentaho6.zip \
-# WAQR: http://ci.pentaho.com/job/WAQR-Plugin/lastSuccessfulBuild/artifact/dist/waqr-plugin-package-TRUNK-SNAPSHOT.zip \
 RUN wget -P $BISERVER_HOME/tomcat/webapps/pentaho/WEB-INF/lib http://meteorite.bi/downloads/saiku-olap-util-3.7-SNAPSHOT.jar \
 	&& wget -O btable.zip http://sourceforge.net/projects/btable/files/Version2.1/BTable-pentaho5-STABLE-2.1.zip/download \
 	&& wget -O saiku-chart-plus.zip http://sourceforge.net/projects/saikuchartplus/files/SaikuChartPlus3/saiku-chart-plus-vSaiku3-plugin-pentaho.zip/download \
 	&& wget --progress=dot:giga http://meteorite.bi/downloads/saiku-plugin-p6-3.8.8.zip \
-		http://ci.pentaho.com/job/webdetails-cte/26/artifact/dist/cte-6.0-SNAPSHOT.zip \
+		http://ci.pentaho.com/job/webdetails-cte/27/artifact/dist/cte-7.0-SNAPSHOT.zip \
 		http://ctools.pentaho.com/files/d3ComponentLibrary/14.06.18/d3ComponentLibrary-14.06.18.zip \
 		https://github.com/rpbouman/pash/raw/master/bin/pash.zip \
 	&& for i in *.zip; do echo "Unpacking $i..." && unzip -q -d pentaho-solutions/system $i && rm -f $i; done \
