@@ -35,10 +35,12 @@ COPY repository.xml.template $BISERVER_HOME/pentaho-solutions/system/jackrabbit/
 WORKDIR $BISERVER_HOME
 
 # Download Patches / Plugins
-RUN wget -P $BISERVER_HOME/tomcat/webapps/pentaho/WEB-INF/lib http://meteorite.bi/downloads/saiku-olap-util-3.7-SNAPSHOT.jar \
+# http://meteorite.bi/downloads/saiku-plugin-p6-3.8.8.zip
+# http://meteorite.bi/downloads/saiku-olap-util-3.7-SNAPSHOT.jar
+RUN wget -P $BISERVER_HOME/tomcat/webapps/pentaho/WEB-INF/lib https://github.com/zhicwu/saiku/releases/download/3.8.8-SNAPSHOT/saiku-olap-util-3.8.8.jar \
 	&& wget -O btable.zip https://github.com/zhicwu/BTable/releases/download/7.0-RC1/BTable-7.0-RC1.zip \
 	&& wget -O saiku-chart-plus.zip http://sourceforge.net/projects/saikuchartplus/files/SaikuChartPlus3/saiku-chart-plus-vSaiku3-plugin-pentaho.zip/download \
-	&& wget --progress=dot:giga http://meteorite.bi/downloads/saiku-plugin-p6-3.8.8.zip \
+	&& wget --progress=dot:giga https://github.com/zhicwu/saiku/releases/download/3.8.8-SNAPSHOT/saiku-plugin-p6-3.8.8.zip \
 		http://ci.pentaho.com/job/webdetails-cte/27/artifact/dist/cte-7.0-SNAPSHOT.zip \
 		http://ctools.pentaho.com/files/d3ComponentLibrary/14.06.18/d3ComponentLibrary-14.06.18.zip \
 		https://github.com/rpbouman/pash/raw/master/bin/pash.zip \
