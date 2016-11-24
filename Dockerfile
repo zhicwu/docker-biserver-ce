@@ -36,7 +36,7 @@ WORKDIR $BISERVER_HOME
 
 # Download Patches / Plugins
 RUN wget -P $BISERVER_HOME/tomcat/webapps/pentaho/WEB-INF/lib http://meteorite.bi/downloads/saiku-olap-util-3.7-SNAPSHOT.jar \
-	&& wget -O btable.zip http://sourceforge.net/projects/btable/files/Version2.1/BTable-pentaho5-STABLE-2.1.zip/download \
+	&& wget -O btable.zip https://github.com/zhicwu/BTable/releases/download/7.0-RC1/BTable-7.0-RC1.zip \
 	&& wget -O saiku-chart-plus.zip http://sourceforge.net/projects/saikuchartplus/files/SaikuChartPlus3/saiku-chart-plus-vSaiku3-plugin-pentaho.zip/download \
 	&& wget --progress=dot:giga http://meteorite.bi/downloads/saiku-plugin-p6-3.8.8.zip \
 		http://ci.pentaho.com/job/webdetails-cte/27/artifact/dist/cte-7.0-SNAPSHOT.zip \
