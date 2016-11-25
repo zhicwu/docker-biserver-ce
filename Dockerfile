@@ -35,10 +35,12 @@ COPY repository.xml.template $BISERVER_HOME/pentaho-solutions/system/jackrabbit/
 WORKDIR $BISERVER_HOME
 
 # Download Patches / Plugins
-RUN wget -P $BISERVER_HOME/tomcat/webapps/pentaho/WEB-INF/lib http://meteorite.bi/downloads/saiku-olap-util-3.7-SNAPSHOT.jar \
-	&& wget -O btable.zip http://sourceforge.net/projects/btable/files/Version2.1/BTable-pentaho5-STABLE-2.1.zip/download \
+# http://meteorite.bi/downloads/saiku-plugin-p6-3.8.8.zip
+# http://meteorite.bi/downloads/saiku-olap-util-3.7-SNAPSHOT.jar
+RUN wget -P $BISERVER_HOME/tomcat/webapps/pentaho/WEB-INF/lib https://github.com/zhicwu/saiku/releases/download/3.8.8-SNAPSHOT/saiku-olap-util-3.8.8.jar \
+	&& wget -O btable.zip https://github.com/zhicwu/BTable/releases/download/7.0-RC1/BTable-7.0-RC1.zip \
 	&& wget -O saiku-chart-plus.zip http://sourceforge.net/projects/saikuchartplus/files/SaikuChartPlus3/saiku-chart-plus-vSaiku3-plugin-pentaho.zip/download \
-	&& wget --progress=dot:giga http://meteorite.bi/downloads/saiku-plugin-p6-3.8.8.zip \
+	&& wget --progress=dot:giga https://github.com/zhicwu/saiku/releases/download/3.8.8-SNAPSHOT/saiku-plugin-p6-3.8.8.zip \
 		http://ci.pentaho.com/job/webdetails-cte/27/artifact/dist/cte-7.0-SNAPSHOT.zip \
 		http://ctools.pentaho.com/files/d3ComponentLibrary/14.06.18/d3ComponentLibrary-14.06.18.zip \
 		https://github.com/rpbouman/pash/raw/master/bin/pash.zip \
@@ -102,6 +104,7 @@ RUN find . -name "*.bat" -delete \
 	&& sed -i -e 's|\(var query = Saiku.tabs._tabs\[0\].content.query;\)|\1\nif (query == undefined ) query = Saiku.tabs._tabs[1].content.query;|' pentaho-solutions/system/saiku/ui/js/saiku/plugins/BIServer/plugin.js \
 	&& sed -i -e 's/\(exec ".*"\) start/\1 run/' tomcat/bin/startup.sh \
 	&& rm -f promptuser.* pentaho-solutions/system/default-content/* \
+	&& sed -i -e 's|\(.*<default-theme>\).*\(</default-theme>\)|\1crystal\2|' pentaho-solutions/system/pentaho.xml \
 	&& sed -i -e 's|\(<log-level>\).*\(</log-level>\)|\1INFO\2|' pentaho-solutions/system/pentaho.xml \
 	&& sed -i -e 's|\(<max-act-conn>\).*\(</max-act-conn>\)|\150\2|' pentaho-solutions/system/pentaho.xml \
 	&& sed -i -e 's|\(<sampledata-datasource>\).*|<!-- \1|' pentaho-solutions/system/pentaho.xml \
