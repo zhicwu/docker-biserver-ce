@@ -25,7 +25,8 @@ RUN apt-get update \
 # Download Pentaho BI Server Community Edition and Unpack
 RUN wget --progress=dot:giga http://downloads.sourceforge.net/project/pentaho/Business%20Intelligence%20Server/${BISERVER_VERSION}/pentaho-server-ce-${BISERVER_BUILD}.zip \
 	&& unzip -q *.zip \
-	&& rm -f *.zip
+	&& rm -f *.zip \
+	&& ln -s $BISERVER_HOME /biserver-ce
 
 # Add Entry Point and Templates
 COPY docker-entrypoint.sh $BISERVER_HOME/docker-entrypoint.sh
