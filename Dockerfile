@@ -112,6 +112,16 @@ RUN find . -name "*.bat" -delete \
 	&& sed -i -e 's/\(exec ".*"\) start/\1 run/' tomcat/bin/startup.sh \
 	&& rm -f promptuser.* pentaho-solutions/system/default-content/* \
 	&& sed -i -e 's|\(<bean id="IAuditEntry" class="\).*|\1org.pentaho.platform.engine.core.audit.NullAuditEntry" scope="singleton" />|' pentaho-solutions/system/pentahoObjects.spring.xml \
+	&& sed -i -e 's|\(      <MimeTypeDefinition mimeType="application/vnd.ms-excel">\)|      <MimeTypeDefinition mimeType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">\n        <extension>xlsx</extension>\n      </MimeTypeDefinition>\n\1|' pentaho-solutions/system/ImportHandlerMimeTypeDefinitions.xml \
+	&& sed -i -e 's|\(      <MimeTypeDefinition mimeType="application/vnd.ms-excel">\)|      <MimeTypeDefinition mimeType="application/vnd.openxmlformats-officedocument.spreadsheetml.template">\n        <extension>xltx</extension>\n      </MimeTypeDefinition>\n\1|' pentaho-solutions/system/ImportHandlerMimeTypeDefinitions.xml \
+	&& sed -i -e 's|\(      <MimeTypeDefinition mimeType="application/vnd.ms-excel">\)|      <MimeTypeDefinition mimeType="application/vnd.ms-excel.sheet.macroEnabled.12">\n        <extension>xlsm</extension>\n      </MimeTypeDefinition>\n\1|' pentaho-solutions/system/ImportHandlerMimeTypeDefinitions.xml \
+	&& sed -i -e 's|\(      <MimeTypeDefinition mimeType="application/vnd.ms-excel">\)|      <MimeTypeDefinition mimeType="application/vnd.ms-excel.template.macroEnabled.12">\n        <extension>xltm</extension>\n      </MimeTypeDefinition>\n\1|' pentaho-solutions/system/ImportHandlerMimeTypeDefinitions.xml \
+	&& sed -i -e 's|\(      <MimeTypeDefinition mimeType="application/vnd.ms-excel">\)|      <MimeTypeDefinition mimeType="application/vnd.ms-excel.addin.macroEnabled.12">\n        <extension>xlam</extension>\n      </MimeTypeDefinition>\n\1|' pentaho-solutions/system/ImportHandlerMimeTypeDefinitions.xml \
+	&& sed -i -e 's|\(      <MimeTypeDefinition mimeType="application/vnd.ms-excel">\)|      <MimeTypeDefinition mimeType="application/vnd.ms-excel.sheet.binary.macroEnabled.12">\n        <extension>xlsb</extension>\n      </MimeTypeDefinition>\n\1|' pentaho-solutions/system/ImportHandlerMimeTypeDefinitions.xml \
+	&& sed -i -e 's|\(        <extension>xls</extension>\)|\1\n        <extension>xlt</extension>\n        <extension>xla</extension>|' pentaho-solutions/system/ImportHandlerMimeTypeDefinitions.xml \
+	&& sed -i -e 's|\(        <extension>sql</extension>\)|\1\n        <extension>txt</extension>\n        <extension>csv</extension>|' pentaho-solutions/system/ImportHandlerMimeTypeDefinitions.xml \
+	&& sed -i -e 's|\(,csv,\)|\1sql,|' pentaho-solutions/system/*.xml \
+	&& sed -i -e 's|\(,xlsx,\)|\1xltx,xlsm,xltm,xlam,xlsb,|' pentaho-solutions/system/*.xml \
 	&& sed -i -e 's|\(<log-level>\).*\(</log-level>\)|\1INFO\2|' pentaho-solutions/system/pentaho.xml \
 	&& sed -i -e 's|\(<max-act-conn>\).*\(</max-act-conn>\)|\150\2|' pentaho-solutions/system/pentaho.xml \
 	&& sed -i -e 's|\(<sampledata-datasource>\).*|<!-- \1|' pentaho-solutions/system/pentaho.xml \
