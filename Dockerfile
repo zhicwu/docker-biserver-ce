@@ -10,8 +10,8 @@ MAINTAINER Zhichun Wu <zhicwu@gmail.com>
 
 # Set Environment Variables
 ENV BISERVER_VERSION=7.0 BISERVER_BUILD=7.0.0.0-25 PDI_PATCH=7.0.0.0-SNAPSHOT \
-	BISERVER_HOME=/pentaho-server BISERVER_USER=pentaho \
-	KETTLE_HOME=/pentaho-server/pentaho-solutions/system/kettle \
+	BISERVER_HOME=/biserver-ce BISERVER_USER=pentaho \
+	KETTLE_HOME=/biserver-ce/pentaho-solutions/system/kettle \
 	JNA_VERSION=4.2.2 OSHI_VERSION=3.2 \
 	MYSQL_DRIVER_VERSION=5.1.40 JTDS_VERSION=1.3.1 CASSANDRA_DRIVER_VERSION=0.6.1 \
 	XMLA_PROVIDER_VERSION=1.0.0.103
@@ -26,7 +26,8 @@ RUN apt-get update \
 RUN wget --progress=dot:giga http://downloads.sourceforge.net/project/pentaho/Business%20Intelligence%20Server/${BISERVER_VERSION}/pentaho-server-ce-${BISERVER_BUILD}.zip \
 	&& unzip -q *.zip \
 	&& rm -f *.zip \
-	&& ln -s $BISERVER_HOME /biserver-ce
+	&& mv /pentaho-server $BISERVER_HOME \
+	&& ln -s $BISERVER_HOME /pentaho-server
 
 # Add Entry Point and Templates
 COPY docker-entrypoint.sh $BISERVER_HOME/docker-entrypoint.sh
