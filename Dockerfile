@@ -16,10 +16,14 @@ ENV BISERVER_VERSION=7.0 BISERVER_BUILD=7.0.0.0-25 PDI_PATCH=7.0.0.0-SNAPSHOT \
 	MYSQL_DRIVER_VERSION=5.1.40 JTDS_VERSION=1.3.1 CASSANDRA_DRIVER_VERSION=0.6.1 \
 	XMLA_PROVIDER_VERSION=1.0.0.103
 
-# Install Required Packages and Add User
+# Add Cron Jobs
+COPY purge-old-files.sh /etc/cron.hourly/purge-old-files
+
+# Install Required Packages, Configure Crons and Add User
 RUN apt-get update \
 	&& apt-get install -y libjna-java libapr1-dev libssl-dev gcc make \
 	&& rm -rf /var/lib/apt/lists/* \
+	&& chmod 0700 /etc/cron.hourly/* \
 	&& useradd -md $BISERVER_HOME -s /bin/bash $BISERVER_USER
 
 # Download Pentaho BI Server Community Edition and Unpack
@@ -53,7 +57,7 @@ RUN wget -P $BISERVER_HOME/tomcat/webapps/pentaho/WEB-INF/lib https://github.com
 RUN wget --progress=dot:giga http://central.maven.org/maven2/mysql/mysql-connector-java/${MYSQL_DRIVER_VERSION}/mysql-connector-java-${MYSQL_DRIVER_VERSION}.jar \
 		http://central.maven.org/maven2/net/sourceforge/jtds/jtds/${JTDS_VERSION}/jtds-${JTDS_VERSION}.jar \
 		http://central.maven.org/maven2/com/github/zhicwu/cassandra-jdbc-driver/${CASSANDRA_DRIVER_VERSION}/cassandra-jdbc-driver-${CASSANDRA_DRIVER_VERSION}-shaded.jar \
-	&& wget --progress=dot:giga -O tomcat/webapps/pentaho/docs/xmla-connector.exe https://sourceforge.net/projects/xmlaconnect/files/XMLA_Provider_v${XMLA_PROVIDER_VERSION}.exe/download \
+	&& wget --progress=dot:giga  --output-document=$BISERVER_HOME/tomcat/webapps/pentaho/docs/xmla-connector.exe https://sourceforge.net/projects/xmlaconnect/files/XMLA_Provider_v${XMLA_PROVIDER_VERSION}.exe/download \
 	&& rm -f tomcat/lib/mysql*.jar tomcat/lib/jtds*.jar \
 	&& mv *.jar tomcat/lib/.
 
@@ -80,8 +84,9 @@ RUN wget --progress=dot:giga https://github.com/zhicwu/pdi-cluster/releases/down
 	&& $JAVA_HOME/bin/jar uf ../pentaho-solutions/system/pdi-pur-plugin/pdi-pur-plugin-${BISERVER_BUILD}.jar org/pentaho/di/repository/pur/LazyUnifiedRepositoryDirectory.class \
 	&& rm -rf org/pentaho/di/repository \
 	&& $JAVA_HOME/bin/jar uf ../tomcat/webapps/pentaho/WEB-INF/lib/kettle-core-${BISERVER_BUILD}.jar org/pentaho/di/core/row \
+	&& $JAVA_HOME/bin/jar uf ../tomcat/webapps/pentaho/WEB-INF/lib/kettle-core-${BISERVER_BUILD}.jar org/pentaho/di/core/util \
 	&& $JAVA_HOME/bin/jar uf ../tomcat/webapps/pentaho/WEB-INF/lib/kettle-core-${BISERVER_BUILD}.jar org/pentaho/di/cluster/SlaveConnectionManager*.class \
-	&& rm -rf org/pentaho/di/core/row org/pentaho/di/cluster/SlaveConnectionManager*.class \
+	&& rm -rf org/pentaho/di/core/row org/pentaho/di/core/util org/pentaho/di/cluster/SlaveConnectionManager*.class \
 	&& $JAVA_HOME/bin/jar uf ../tomcat/webapps/pentaho/WEB-INF/lib/kettle-engine-${BISERVER_BUILD}.jar kettle-servlets.xml \
 	&& $JAVA_HOME/bin/jar uf ../tomcat/webapps/pentaho/WEB-INF/lib/kettle-engine-${BISERVER_BUILD}.jar org/pentaho/di \
 	&& rm -rf org/pentaho/di \
