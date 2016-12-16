@@ -58,9 +58,8 @@ RUN wget --progress=dot:giga http://central.maven.org/maven2/mysql/mysql-connect
 		http://central.maven.org/maven2/net/sourceforge/jtds/jtds/${JTDS_VERSION}/jtds-${JTDS_VERSION}.jar \
 		http://central.maven.org/maven2/com/github/zhicwu/cassandra-jdbc-driver/${CASSANDRA_DRIVER_VERSION}/cassandra-jdbc-driver-${CASSANDRA_DRIVER_VERSION}-shaded.jar \
 	&& rm -f tomcat/lib/mysql*.jar tomcat/lib/jtds*.jar \
-	&& mv *.jar tomcat/lib/.
-RUN wget --progress=dot:giga  -O tomcat/webapps/pentaho/docs/xmla-connector.exe https://sourceforge.net/projects/xmlaconnect/files/XMLA_Provider_v${XMLA_PROVIDER_VERSION}.exe/download
-	
+	&& mv *.jar tomcat/lib/ \
+	&& wget --progress=dot:giga  -O tomcat/webapps/pentaho/docs/xmla-connector.exe https://sourceforge.net/projects/xmlaconnect/files/XMLA_Provider_v${XMLA_PROVIDER_VERSION}.exe/download
 
 # Compile and Install Tomcat Native Lib
 RUN tar zxvf tomcat/bin/tomcat-native.tar.gz \
