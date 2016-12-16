@@ -24,7 +24,7 @@ RUN apt-get update \
 	&& apt-get install -y libjna-java libapr1-dev libssl-dev gcc make \
 	&& rm -rf /var/lib/apt/lists/* \
 	&& chmod 0700 /etc/cron.hourly/* \
-	&& useradd -md $BISERVER_HOME -s /bin/bash $BISERVER_USER
+	&& useradd -Md $BISERVER_HOME -s /bin/bash $BISERVER_USER
 
 # Download Pentaho BI Server Community Edition and Unpack
 RUN wget --progress=dot:giga http://downloads.sourceforge.net/project/pentaho/Business%20Intelligence%20Server/${BISERVER_VERSION}/pentaho-server-ce-${BISERVER_BUILD}.zip \
