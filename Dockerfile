@@ -9,7 +9,7 @@ FROM zhicwu/java:8
 MAINTAINER Zhichun Wu <zhicwu@gmail.com>
 
 # Set Environment Variables
-ENV BISERVER_VERSION=7.0 BISERVER_BUILD=7.0.0.0-25 PDI_PATCH=7.0.0.0.1 \
+ENV BISERVER_VERSION=7.0 BISERVER_BUILD=7.0.0.0-25 PDI_PATCH=7.0.0.0.2 \
 	BISERVER_HOME=/biserver-ce BISERVER_USER=pentaho \
 	KETTLE_HOME=/biserver-ce/pentaho-solutions/system/kettle \
 	JNA_VERSION=4.2.2 OSHI_VERSION=3.2 \
