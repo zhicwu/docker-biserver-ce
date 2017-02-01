@@ -9,7 +9,7 @@ FROM zhicwu/java:8
 MAINTAINER Zhichun Wu <zhicwu@gmail.com>
 
 # Set Environment Variables
-ENV BISERVER_VERSION=6.1 BISERVER_BUILD=6.1.0.1-196 PDI_PATCH=6.1.0.1.2 \
+ENV BISERVER_VERSION=6.1 BISERVER_BUILD=6.1.0.1-196 PDI_PATCH=6.1.0.1.3 \
 	BISERVER_HOME=/biserver-ce BISERVER_USER=pentaho \
 	KETTLE_HOME=/biserver-ce/pentaho-solutions/system/kettle \
 	JNA_VERSION=4.2.2 OSHI_VERSION=3.2 \
@@ -96,6 +96,7 @@ RUN wget --progress=dot:giga https://github.com/zhicwu/pdi-cluster/releases/down
 	&& $JAVA_HOME/bin/jar uf ../tomcat/webapps/pentaho/WEB-INF/lib/kettle-engine-${BISERVER_BUILD}.jar org/pentaho/di \
 	&& rm -rf org/pentaho/di \
 	&& $JAVA_HOME/bin/jar uf ../tomcat/webapps/pentaho/WEB-INF/lib/pentaho-platform-scheduler-${BISERVER_BUILD}.jar org/pentaho/platform/scheduler2/quartz \
+	&& $JAVA_HOME/bin/jar uf ../tomcat/webapps/pentaho/WEB-INF/lib/pentaho-reporting-engine-classic-core-platform-plugin-${BISERVER_BUILD}.jar org/pentaho/reporting/platform/plugin/connection \
 	&& cd .. \
 	&& rm -rf patches *.jar \
 	&& wget https://maven.java.net/content/repositories/releases/net/java/dev/jna/jna/$JNA_VERSION/jna-$JNA_VERSION.jar \
