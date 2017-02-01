@@ -28,6 +28,10 @@ services:
       SERVER_NAME: ${SERVER_NAME}
       SERVER_HOST: ${SERVER_HOST}
       SERVER_PORT: ${SERVER_EXT_PORT}
+    # still need below even using docker engine 1.12
+    # see more at https://github.com/docker/docker/issues/21051 and https://docs.docker.com/engine/security/seccomp/
+    security_opt:
+      - seccomp:unconfined
     ulimits:
       nproc: 65535
       nofile:
