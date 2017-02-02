@@ -55,8 +55,17 @@ RUN wget -P $BISERVER_HOME/tomcat/webapps/pentaho/WEB-INF/lib https://github.com
 		http://ci.pentaho.com/job/webdetails-cte/26/artifact/dist/cte-6.0-SNAPSHOT.zip \
 		http://ctools.pentaho.com/files/d3ComponentLibrary/14.06.18/d3ComponentLibrary-14.06.18.zip \
 		https://github.com/rpbouman/pash/raw/master/bin/pash.zip \
-	&& for i in *.zip; do echo "Unpacking $i..." && unzip -q -d pentaho-solutions/system $i && rm -f $i; done \
-	&& rm -f *.zip
+	&& for i in *.zip; do echo "Unpacking $i..." && unzip -q -d pentaho-solutions/system $i && rm -f $i; done
+
+# Install JAMon API (https://sourceforge.net/projects/jamonapi)
+# Will switch to cAdvisor + Prometheus + ZipKin + Cassandra + ElasticSearch + Grafana in 7.0+
+RUN wget -O jamon.zip https://sourceforge.net/projects/jamonapi/files/jamonapi/v2_81/jamonall-2.81.zip/download \
+	&& unzip -q -d pentaho-solutions/system jamon.zip \
+	&& mv pentaho-solutions/system/jamonall-2.81/jamon-2.81.jar tomcat/lib/. \
+	&& unzip -q -d tomcat/webapps/jamon pentaho-solutions/system/jamonall-2.81/jamon.war \
+	&& rm -rf pentaho-solutions/system/__MACOSX tomcat/webapps/jamon/WEB-INF/lib/hsqldb.jar *.zip \
+	&& rm -rf pentaho-solutions/system/jamonall* \
+	&& sed -i -e 's|\(<Engine name="Catalina" defaultHost="localhost">\)|\1\n      <Valve className="com.jamonapi.http.JAMonTomcatValve"/>|' tomcat/conf/server.xml
 
 # Add More JDBC Drivers and XMLA Connector
 RUN wget --progress=dot:giga http://central.maven.org/maven2/mysql/mysql-connector-java/${MYSQL_DRIVER_VERSION}/mysql-connector-java-${MYSQL_DRIVER_VERSION}.jar \
