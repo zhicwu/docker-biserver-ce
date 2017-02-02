@@ -47,7 +47,7 @@ RUN wget -P $BISERVER_HOME/tomcat/webapps/pentaho/WEB-INF/lib https://github.com
 	&& wget -O btable.zip https://github.com/zhicwu/BTable/releases/download/7.0-RC1/BTable-7.0-RC1.zip \
 	&& wget -O saiku-chart-plus.zip http://sourceforge.net/projects/saikuchartplus/files/SaikuChartPlus3/saiku-chart-plus-vSaiku3-plugin-pentaho.zip/download \
 	&& wget --progress=dot:giga https://github.com/zhicwu/saiku/releases/download/3.8.8-SNAPSHOT/saiku-plugin-p6-3.8.8.zip \
-		http://ci.pentaho.com/job/webdetails-cte/29/artifact/dist/cte-7.0-SNAPSHOT.zip \
+		https://github.com/zhicwu/cte/releases/download/7.0-SNAPSHOT/cte-7.0-snapshot.zip \
 		http://ctools.pentaho.com/files/d3ComponentLibrary/14.06.18/d3ComponentLibrary-14.06.18.zip \
 		https://github.com/rpbouman/pash/raw/master/bin/pash.zip \
 	&& for i in *.zip; do echo "Unpacking $i..." && unzip -q -d pentaho-solutions/system $i && rm -f $i; done \
