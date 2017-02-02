@@ -49,7 +49,7 @@ WORKDIR $BISERVER_HOME
 # Tapa: https://github.com/marpontes/tapa/releases/download/v0.3.1/tapa-0.3.1-pentaho6.zip \
 # WAQR: http://ci.pentaho.com/job/WAQR-Plugin/lastSuccessfulBuild/artifact/dist/waqr-plugin-package-TRUNK-SNAPSHOT.zip \
 RUN wget -P $BISERVER_HOME/tomcat/webapps/pentaho/WEB-INF/lib https://github.com/zhicwu/saiku/releases/download/tag-3.8.8/saiku-olap-util-3.8.8.jar \
-	&& wget -O btable.zip http://sourceforge.net/projects/btable/files/Version2.1/BTable-pentaho5-STABLE-2.1.zip/download \
+	&& wget -O btable.zip http://sourceforge.net/projects/btable/files/Version3.0-3.6/BTable-pentaho5-and-pentaho6-3.0-STABLE.zip/download \
 	&& wget -O saiku-chart-plus.zip http://sourceforge.net/projects/saikuchartplus/files/SaikuChartPlus3/saiku-chart-plus-vSaiku3-plugin-pentaho.zip/download \
 	&& wget --progress=dot:giga https://github.com/zhicwu/saiku/releases/download/tag-3.8.8/saiku-plugin-p61-3.8.8.zip \
 		http://ci.pentaho.com/job/webdetails-cte/26/artifact/dist/cte-6.0-SNAPSHOT.zip \
