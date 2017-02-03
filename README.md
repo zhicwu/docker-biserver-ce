@@ -28,13 +28,12 @@ ubuntu:16.04
 $ docker run --name bi -p 28080:8080 -d zhicwu/biserver-ce:6.1 biserver
 $ docker logs -f bi
 ```
-You can now access the BI server using admin/password at http://localhost:28080.
 - Run patched Pentaho server
 ```
 $ docker run --name bi -e APPLY_PATCHES=Y -p 28080:8080 -d zhicwu/biserver-ce:6.1 biserver
 $ docker logs -f bi
 ```
-- Use docker-compose
+- Use docker-compose(Recommended)
 ```
 $ git clone https://github.com/zhicwu/docker-biserver-ce.git -b 6.1 --single-branch
 $ cd docker-biserver-ce
@@ -43,7 +42,7 @@ $ docker-compose up -d
 $ docker-compose logs -f
 ```
 
-Regardless which approach you took, after server started, you should be able to access the BI server(http://localhost:28080) using admin/password.
+Regardless which approach you took, after server started, you should be able to access [http://localhost:28080](http://localhost:28080) using admin/password.
 
 ## How to build
 ```

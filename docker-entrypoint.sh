@@ -235,8 +235,7 @@ apply_patches() {
 			&& sed -i -e 's|\(<ref bean="singleTenantAdminAuthorityName"/>\)|\1\n\t\t\t\t<value>Admin</value>|' pentaho-solutions/system/defaultUser.spring.xml \
 			&& find . -name "*.css" | xargs sed -i -e 's|http.*googleusercontent\.com||' \
 			&& find . -name *ga.js | xargs sed -i -e 's|//www\.google\-analytics\.com||' \
-			&& find . -name *ga.js | xargs sed -i -e 's|\?"https\://ssl"\:"http\://www"|?"/":"/"|' \
-			&& mv data/hsqldb data/.hsqldb
+			&& find . -name *ga.js | xargs sed -i -e 's|\?"https\://ssl"\:"http\://www"|?"/":"/"|'
 	fi
 }
 
