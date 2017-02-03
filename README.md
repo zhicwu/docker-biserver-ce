@@ -28,12 +28,12 @@ ubuntu:16.04
 ## Get started
 - Run vanilla Pentaho server
 ```
-$ docker run --name bi -p 28080:8080 -d zhicwu/biserver-ce:7.0 biserver
+$ docker run --name bi -p 8080:8080 -d zhicwu/biserver-ce:7.0 biserver
 $ docker logs -f bi
 ```
 - Run patched Pentaho server
 ```
-$ docker run --name bi -e APPLY_PATCHES=Y -p 28080:8080 -d zhicwu/biserver-ce:7.0 biserver
+$ docker run --name bi -e APPLY_PATCHES=Y -p 8080:8080 -d zhicwu/biserver-ce:7.0 biserver
 $ docker logs -f bi
 ```
 - Use docker-compose (Recommended)
@@ -44,7 +44,7 @@ $ cd docker-biserver-ce
 $ docker-compose up -d
 $ docker-compose logs -f
 ```
-Regardless which approach you took, after server started, you should be able to access http://localhost:28080 using admin/password.
+Regardless which approach you took, after server started, you should be able to access [http://localhost:8080](http://localhost:8080)(admin/password) or [http://localhost:8080/jamon](http://localhost:8080/jamon)(no login required).
 
 ## How to use external database
 Taking MySQL 5.x as an example. Assuming you have pbi_repository, pbi_quartz and pdi_jcr 3 databases created, change docker-compose.yml to set STORAGE_TYPE to mysql5, and then mount volume ./secret.env:/biserver-ce/data/secret.env:rw: with the following content:
