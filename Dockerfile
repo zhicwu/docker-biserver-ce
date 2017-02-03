@@ -28,8 +28,8 @@ RUN echo "Download and unpack Pentaho server..." \
 	&& ln -s $BISERVER_HOME /pentaho-server \
 	&& find $BISERVER_HOME -name "*.bat" -delete \
 	&& find $BISERVER_HOME -name "*.exe" -delete \
-	&& mkdir -p data/.hsqldb \
-	&& /bin/cp -rf data/hsqldb/* data/.hsqldb/. \
+	&& mkdir -p $BISERVER_HOME/data/.hsqldb \
+	&& /bin/cp -rf $BISERVER_HOME/data/hsqldb/* $BISERVER_HOME/data/.hsqldb/. \
 	&& echo "Install APR for Tomcat..." \
 		&& tar zxf $BISERVER_HOME/tomcat/bin/tomcat-native.tar.gz \
 		&& cd tomcat-native*/native \
