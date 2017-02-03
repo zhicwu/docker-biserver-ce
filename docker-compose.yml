@@ -2,7 +2,6 @@ version: '2'
 
 services:
   biserver:
-    build: .
     image: zhicwu/biserver-ce${BI_IMAGE_TAG}
     hostname: ${SERVER_HOST}
     container_name: ${BI_CONTAINER_NAME}
@@ -18,6 +17,7 @@ services:
       - ./data/repository:/biserver-ce/pentaho-solutions/system/jackrabbit/repository:rw
       - ./data/tmp:/biserver-ce/tmp:rw
     environment:
+      APPLY_PATCHES: Y
       BI_JAVA_OPTS: '${BI_JAVA_OPTS}'
       HOST_USER_ID: ${HOST_USER_ID}
       STORAGE_TYPE: ${STORAGE_TYPE}

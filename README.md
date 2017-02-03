@@ -3,13 +3,16 @@ Pentaho BI server(community edition) docker image. https://hub.docker.com/r/zhic
 
 ## What's inside
 ```
-ubuntu:14.04
+ubuntu:16.04
  |
- |--- zhicwu/java:8
-       |
-       |--- zhicwu/biserver-ce:7.0
+ |-- phusion/baseimage:latest
+      |
+      |-- zhicwu/java:8
+           |
+           |-- zhicwu/biserver-ce:7.0
 ```
-* Official Ubuntu Trusty(14.04) docker image
+* Official Ubuntu 16.04 LTS docker image
+* Latest [Phusion Base Image](https://github.com/phusion/baseimage-docker)
 * Oracle JDK 8 latest release
 * [Pentaho BI Server Community Edition](http://community.pentaho.com/) 7.0.0.0-25 with plugins and patches:
  * [BTable](https://sourceforge.net/projects/btable/)
@@ -20,23 +23,31 @@ ubuntu:14.04
  * [XMLA Provider](https://sourceforge.net/projects/xmlaconnect/) 1.0.0.103 - download from Help -> Document popup and install on your windows box
 
 ## Known issue
-- Not able to import mondrian schema in console, you may have to use schema workbench to publish schema to BI server
+- Not able to import mondrian schema in console, you'll have to use schema workbench to publish schema to BI server
 
-## How to use
-- Clone git repository
+## Get started
+- Run vanilla Pentaho server
 ```
-# git clone https://github.com/zhicwu/docker-biserver-ce.git
-# cd docker-biserver-ce
+$ docker run --name bi -p 28080:8080 -d zhicwu/biserver-ce:7.0 biserver
+$ docker logs -f bi
 ```
-- Edit .env and/or docker-compose.yml based on your needs, put your Pentaho configuration files under ext directory if necessary
-- Start BI Server
+- Run patched Pentaho server
 ```
-# docker-compose up -d
-# docker logs -f bi
+$ docker run --name bi -e APPLY_PATCHES=Y -p 28080:8080 -d zhicwu/biserver-ce:7.0 biserver
+$ docker logs -f bi
 ```
-You can now use admin/password to access the BI server at http://localhost:8080.
-- To use MySQL instead of HSQL
-Assuming you have pbi_repository, pbi_quartz and pdi_jcr 3 databases created, change docker-compose.yml to set STORAGE_TYPE to mysql5, and then mount volume ./secret.env:/biserver-ce/data/secret.env:rw: with the following content:
+- Use docker-compose (Recommended)
+```
+$ git clone https://github.com/zhicwu/docker-biserver-ce.git -b 7.0 --single-branch
+$ cd docker-biserver-ce
+... edit .env and/or docker-compose.yml based on your needs, put your Pentaho configuration files under ext directory if necessary ...
+$ docker-compose up -d
+$ docker-compose logs -f
+```
+Regardless which approach you took, after server started, you should be able to access http://localhost:28080 using admin/password.
+
+## How to use external database
+Taking MySQL 5.x as an example. Assuming you have pbi_repository, pbi_quartz and pdi_jcr 3 databases created, change docker-compose.yml to set STORAGE_TYPE to mysql5, and then mount volume ./secret.env:/biserver-ce/data/secret.env:rw: with the following content:
 ```
 SERVER_PASSWD=password
 DB_HOST=xxx
@@ -47,8 +58,7 @@ DB_PASSWD=xxx
 
 ## How to build
 ```
-# git clone https://github.com/zhicwu/docker-biserver-ce.git
-# cd docker-biserver-ce
-# chmod +x *.sh
-# docker build -t zhicwu/biserver-ce .
+$ git clone https://github.com/zhicwu/docker-biserver-ce.git -b 7.0 --single-branch
+$ cd docker-biserver-ce
+$ docker build -t my/biserver:7.0 .
 ```
