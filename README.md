@@ -3,48 +3,51 @@ Pentaho BI server(community edition) docker image for development and testing pu
 
 ## What's inside
 ```
-ubuntu:14.04
+ubuntu:16.04
  |
- |--- zhicwu/java:8
-       |
-       |--- zhicwu/biserver-ce:latest
+ |-- phusion/baseimage:latest
+      |
+      |-- zhicwu/java:8
+           |
+           |-- zhicwu/biserver-ce:6.1
 ```
-* Official Ubuntu Trusty(14.04) docker image
+* Official Ubuntu 16.04 LTS docker image
+* Latest [Phusion Base Image](https://github.com/phusion/baseimage-docker)
 * Oracle JDK 8 latest release
 * [Pentaho BI Server Community Edition](http://community.pentaho.com/) 6.1.0.1-196 with plugins and patches:
  * [BTable](https://sourceforge.net/projects/btable/)
  * [Community Text Editor](http://www.webdetails.pt/ctools/cte/)
  * [D3 Component Library](https://github.com/webdetails/d3ComponentLibrary)
- * Up-to-date JDBC drivers: [Apache Drill](http://drill.apache.org/docs/using-the-jdbc-driver/) 1.6.0, [MySQL Connector/J](http://dev.mysql.com/downloads/connector/j/) 5.1.39, [jTDS](https://sourceforge.net/projects/jtds/) 1.3.1,  [Presto](https://prestodb.io/docs/current/installation/jdbc.html) 0.148 and [Cassandra JDBC Driver](https://github.com/zhicwu/cassandra-jdbc-driver) 0.6.1
+ * Up-to-date JDBC drivers: [MySQL Connector/J](http://dev.mysql.com/downloads/connector/j/) 5.1.40, [jTDS](https://sourceforge.net/projects/jtds/) 1.3.1 and [Cassandra JDBC Driver](https://github.com/zhicwu/cassandra-jdbc-driver) 0.6.1
  * [Saiku](http://community.meteorite.bi/) - enabled SaikuWidgetComponent in CDE
  * [XMLA Provider](https://sourceforge.net/projects/xmlaconnect/) 1.0.0.103 - download from Help -> Document popup and install on your windows box
 
-## Known issues
-* You need to patch Presto's JDBC driver so that it works with PDI and Mondiran
-
 ## How to use
-- Pull the image
+- Run vanilla Pentaho server
 ```
-# docker pull zhicwu/biserver-ce
+$ docker run --name bi -p 28080:8080 -d zhicwu/biserver-ce:6.1 biserver
+$ docker logs -f bi
 ```
-- Setup scripts
+You can now access the BI server using admin/password at http://localhost:28080.
+- Run patched Pentaho server
 ```
-# git clone https://github.com/zhicwu/docker-biserver-ce.git
-# cd docker-biserver-ce
-# chmod +x *.sh
+$ docker run --name bi -e APPLY_PATCHES=Y -p 28080:8080 -d zhicwu/biserver-ce:6.1 biserver
+$ docker logs -f bi
 ```
-- Edit biserver-env.sh and/or put your Pentaho configuration files under ext directory
-- Start BI Server
+- Use docker-compose
 ```
-# ./start-biserver.sh
-# docker logs -f bi
+$ git clone https://github.com/zhicwu/docker-biserver-ce.git -b 6.1 --single-branch
+$ cd docker-biserver-ce
+... make changes to .env and docker-compose.yml as needed ...
+$ docker-compose up -d
+$ docker-compose logs -f
 ```
-You can now access the BI server via http://localhost:8080.
+
+Regardless which approach you took, after server started, you should be able to access the BI server(http://localhost:28080) using admin/password.
 
 ## How to build
 ```
-# git clone https://github.com/zhicwu/docker-biserver-ce.git
-# cd docker-biserver-ce
-# chmod +x *.sh
-# docker build -t zhicwu/biserver-ce .
+$ git clone https://github.com/zhicwu/docker-biserver-ce.git -b 6.1 --single-branch
+$ cd docker-biserver-ce
+$ docker build -t my/biserver:6.1 .
 ```
