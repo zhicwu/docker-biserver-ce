@@ -48,7 +48,7 @@ fix_permission() {
 		# and then work directories and files underneath
 		for d in "$BISERVER_HOME/.pentaho" "$BISERVER_HOME/data/hsqldb" "$BISERVER_HOME/biserver-ce/tomcat/logs" \
 			"$BISERVER_HOME/pentaho-solutions/system/jackrabbit/repository" "$BISERVER_HOME/tmp"; do
-			[ -d $d ] && chown -R $BISERVER_USER $d/*
+			[ -d $d ] && chown -Rf $BISERVER_USER $d/* || true
 		done
 	fi
 }
