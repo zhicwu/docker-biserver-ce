@@ -59,8 +59,7 @@ RUN echo "Download and unpack Pentaho server..." \
 		&& sed -i -e 's|\(,csv,\)|\1sql,|' pentaho-solutions/system/*.xml \
 		&& sed -i -e 's|\(,xlsx,\)|\1xltx,xlsm,xltm,xlam,xlsb,|' pentaho-solutions/system/*.xml \
 	&& echo "Add Pentaho user..." \
-		&& useradd -md $BISERVER_HOME -s /bin/bash $BISERVER_USER \
-		&& chown -R $BISERVER_USER:$BISERVER_USER $BISERVER_HOME
+		&& useradd -md $BISERVER_HOME -s /bin/bash $BISERVER_USER
 
 # Change work directory
 WORKDIR $BISERVER_HOME
