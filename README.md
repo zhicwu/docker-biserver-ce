@@ -25,12 +25,12 @@ ubuntu:16.04
 ## How to use
 - Run vanilla Pentaho server
 ```
-$ docker run --name bi -p 28080:8080 -d zhicwu/biserver-ce:6.1 biserver
+$ docker run --name bi -p 8080:8080 -d zhicwu/biserver-ce:6.1 biserver
 $ docker logs -f bi
 ```
 - Run patched Pentaho server
 ```
-$ docker run --name bi -e APPLY_PATCHES=Y -p 28080:8080 -d zhicwu/biserver-ce:6.1 biserver
+$ docker run --name bi -e APPLY_PATCHES=Y -p 8080:8080 -d zhicwu/biserver-ce:6.1 biserver
 $ docker logs -f bi
 ```
 - Use docker-compose(Recommended)
@@ -42,7 +42,7 @@ $ docker-compose up -d
 $ docker-compose logs -f
 ```
 
-Regardless which approach you took, after server started, you should be able to access [http://localhost:28080](http://localhost:28080) using admin/password.
+Regardless which approach you took, after server started, you should be able to access [http://localhost:8080](http://localhost:8080) using admin/password.
 
 ## How to build
 ```
