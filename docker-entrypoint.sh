@@ -41,15 +41,15 @@ fix_permission() {
 			fi
 
 			usermod -o -u $HOST_USER_ID $BISERVER_USER || true
-		
-			# all sub-directories
-			find $BISERVER_HOME -type d -print0 | xargs -0 chown $BISERVER_USER
-			# and then work directories and files underneath
-			for d in "$BISERVER_HOME/.pentaho" "$BISERVER_HOME/data/hsqldb" "$BISERVER_HOME/biserver-ce/tomcat/logs" \
-				"$BISERVER_HOME/pentaho-solutions/system/jackrabbit/repository" "$BISERVER_HOME/tmp"; do
-				[ -d $d ] && chown -R $BISERVER_USER $d/*
-			done
 		fi
+		
+		# all sub-directories
+		find $BISERVER_HOME -type d -print0 | xargs -0 chown $BISERVER_USER
+		# and then work directories and files underneath
+		for d in "$BISERVER_HOME/.pentaho" "$BISERVER_HOME/data/hsqldb" "$BISERVER_HOME/biserver-ce/tomcat/logs" \
+			"$BISERVER_HOME/pentaho-solutions/system/jackrabbit/repository" "$BISERVER_HOME/tmp"; do
+			[ -d $d ] && chown -R $BISERVER_USER $d/*
+		done
 	fi
 }
 
