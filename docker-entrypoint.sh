@@ -23,9 +23,10 @@ set -e
 : ${STORAGE_TYPE:=""}
 
 fix_permission() {
-	echo "Fixing permissions..."
-	
-	if [ "$HOST_USER_ID" != "" ]; then
+	# only change when HOST_USER_ID is not empty(and not root)
+	if [ "$HOST_USER_ID" != "" ] && [ $HOST_USER_ID != 0 ]; then
+		echo "Fixing permissions..."
+		
 		# based on https://github.com/schmidigital/permission-fix/blob/master/tools/permission_fix
 		UNUSED_USER_ID=21338
 
@@ -33,17 +34,23 @@ fix_permission() {
 		DOCKER_USER_CURRENT_ID=`id -u $BISERVER_USER`
 
 		if [ "$DOCKER_USER_CURRENT_ID" != "$HOST_USER_ID" ]; then
-		  DOCKER_USER_OLD=`getent passwd $HOST_USER_ID | cut -d: -f1`
+			DOCKER_USER_OLD=`getent passwd $HOST_USER_ID | cut -d: -f1`
 
-		  if [ ! -z "$DOCKER_USER_OLD" ]; then
-			usermod -o -u $UNUSED_USER_ID $DOCKER_USER_OLD
-		  fi
+			if [ ! -z "$DOCKER_USER_OLD" ]; then
+				usermod -o -u $UNUSED_USER_ID $DOCKER_USER_OLD
+			fi
 
-		  usermod -o -u $HOST_USER_ID $BISERVER_USER || true
+			usermod -o -u $HOST_USER_ID $BISERVER_USER || true
+		
+			# all sub-directories
+			find $BISERVER_HOME -type d -print0 | xargs -0 chown $BISERVER_USER
+			# and then work directories and files underneath
+			for d in "$BISERVER_HOME/.pentaho" "$BISERVER_HOME/data/hsqldb" "$BISERVER_HOME/biserver-ce/tomcat/logs" \
+				"$BISERVER_HOME/pentaho-solutions/system/jackrabbit/repository" "$BISERVER_HOME/tmp"; do
+				[ -d $d ] && chown -R $BISERVER_USER $d/*
+			done
 		fi
 	fi
-	
-	chown -R $BISERVER_USER:$BISERVER_USER $BISERVER_HOME
 }
 
 update_db() {
