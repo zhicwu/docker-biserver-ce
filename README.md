@@ -9,16 +9,16 @@ ubuntu:16.04
       |
       |-- zhicwu/java:8
            |
-           |-- zhicwu/biserver-ce:7.0
+           |-- zhicwu/biserver-ce:7.1
 ```
 * Official Ubuntu 16.04 LTS docker image
 * Latest [Phusion Base Image](https://github.com/phusion/baseimage-docker)
 * Oracle JDK 8 latest release
-* [Pentaho BI Server Community Edition](http://community.pentaho.com/) 7.0.0.0-25 with plugins and patches:
+* [Pentaho BI Server Community Edition](http://community.pentaho.com/) 7.1.0.0-12 with plugins and patches:
  * [BTable](https://sourceforge.net/projects/btable/)
  * [Community Text Editor](http://www.webdetails.pt/ctools/cte/)
  * [D3 Component Library](https://github.com/webdetails/d3ComponentLibrary)
- * Up-to-date JDBC drivers: [MySQL Connector/J](http://dev.mysql.com/downloads/connector/j/) 5.1.40, [jTDS](https://sourceforge.net/projects/jtds/) 1.3.1 and [Cassandra JDBC Driver](https://github.com/zhicwu/cassandra-jdbc-driver) 0.6.1
+ * Up-to-date JDBC drivers: [MySQL Connector/J](http://dev.mysql.com/downloads/connector/j/) 5.1.42, [jTDS](https://sourceforge.net/projects/jtds/) 1.3.1 and [Cassandra JDBC Driver](https://github.com/zhicwu/cassandra-jdbc-driver) 0.6.3
  * [Saiku](http://community.meteorite.bi/) - enabled SaikuWidgetComponent in CDE
  * [XMLA Provider](https://sourceforge.net/projects/xmlaconnect/) 1.0.0.103 - download from Help -> Document popup and install on your windows box
 
