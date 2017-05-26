@@ -213,7 +213,7 @@ apply_patches() {
 			&& $JAVA_HOME/bin/jar uf ../tomcat/webapps/pentaho/WEB-INF/lib/kettle-engine-${BISERVER_BUILD}.jar org/pentaho/di \
 			&& rm -rf org/pentaho/di \
 			&& $JAVA_HOME/bin/jar uf ../tomcat/webapps/pentaho/WEB-INF/lib/pentaho-platform-scheduler-${BISERVER_BUILD}.jar org/pentaho/platform/scheduler2/quartz \
-			&& $JAVA_HOME/bin/jar uf ../tomcat/webapps/pentaho/WEB-INF/lib/pentaho-reporting-engine-classic-core-platform-plugin-${BISERVER_BUILD}.jar org/pentaho/reporting/platform/plugin/connection \
+			&& $JAVA_HOME/bin/jar uf ../tomcat/webapps/pentaho/WEB-INF/lib/classic-core-platform-plugin-${BISERVER_BUILD}.jar org/pentaho/reporting/platform/plugin/connection \
 			&& $JAVA_HOME/bin/jar uf ../tomcat/webapps/pentaho/WEB-INF/lib/pentaho-platform-core-${BISERVER_BUILD}.jar org/pentaho/platform/engine/services \
 			&& cd - \
 			&& rm -rf patches *.jar
