@@ -1,12 +1,17 @@
 #!/bin/bash
 [[ "$TRACE" ]] && set -x
 
+_LOG_FILE=$BISERVER_HOME/tomcat/logs/purge.log
+
+[ -f ${_LOG_FILE}.old ] && rm -f ${_LOG_FILE}.old
+mv $_LOG_FILE ${_LOG_FILE}.old
+
 log() {
-  [[ "$2" ]] && echo "[`date +'%Y-%m-%d %H:%M:%S.%N'`] - $1 - $2"
+  [[ "$2" ]] && echo "[`date +'%Y-%m-%d %H:%M:%S.%N'`] - $1 - $2" >> $_LOG_FILE
 }
 
-log "INFO" "Removing temporary files that have not been modified within one day under $BISERVER_HOME/tomcat/temp directory..."
-find $BISERVER_HOME/tomcat/temp/* -maxdepth 0 -type f -name "*.*" -mtime +1 | xargs rm -f
-log "INFO" "Removing log files created 21 days ago under /tmp/kettle and $BISERVER_HOME/tomcat/logs directories..."
-find /tmp/kettle $BISERVER_HOME/tomcat/logs -type f -iname "*.log" -o -iname "*.txt" -mtime +21 | xargs rm -f
+log "INFO" "Removing temporary files modified and read two days ago(or older) under $BISERVER_HOME/tomcat/temp directory..."
+find $BISERVER_HOME/tomcat/temp/ -maxdepth 1 -type f -atime +2 -a -mtime +2 | xargs rm -fv >> $_LOG_FILE
+log "INFO" "Removing log files modified 14 days ago(or older) under /tmp/kettle and $BISERVER_HOME/tomcat/logs directories..."
+find /tmp/kettle/ $BISERVER_HOME/tomcat/logs/ -mtime +14 | xargs rm -rfv >> $_LOG_FILE
 log "INFO" "Done"
