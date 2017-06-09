@@ -38,7 +38,8 @@ RUN echo "Download and unpack Pentaho server..." \
 		&& ./configure --with-apr=/usr/bin/apr-config --disable-openssl --with-java-home=$JAVA_HOME --prefix=$BISERVER_HOME/tomcat \
 		&& make \
 		&& make install \
-		&& sed -i -e 's|\(SSLEngine="\).*\("\)|\1off\2|' $BISERVER_HOME/tomcat/conf/server.xml \
+		&& sed -i -e 's|\(SSLEngine="\).*\("\)|\1off\2|' \
+			-e 's|\(<Engine name="Catalina" defaultHost="localhost">\)|\1\n      <Valve className="org.apache.catalina.valves.RemoteIpValve" internalProxies=".*" remoteIpHeader="x-forwarded-for" remoteIpProxiesHeader="x-forwarded-by" protocolHeader="x-forwarded-proto" />|' $BISERVER_HOME/tomcat/conf/server.xml \
 		&& cd / \
 		&& rm -rf tomcat-native* $BISERVER_HOME/tomcat/bin/tomcat-native.tar.gz \
 		&& apt-get autoremove -y libapr1-dev gcc make \
@@ -48,14 +49,14 @@ RUN echo "Download and unpack Pentaho server..." \
 		&& cd $BISERVER_HOME \
 		&& sed -i -e 's/\(exec ".*"\) start/\1 run/' tomcat/bin/startup.sh \
 		&& rm -f promptuser.* pentaho-solutions/system/default-content/* \
-		&& sed -i -e 's|\(      <MimeTypeDefinition mimeType="application/vnd.ms-excel">\)|      <MimeTypeDefinition mimeType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">\n        <extension>xlsx</extension>\n      </MimeTypeDefinition>\n\1|' pentaho-solutions/system/ImportHandlerMimeTypeDefinitions.xml \
-		&& sed -i -e 's|\(      <MimeTypeDefinition mimeType="application/vnd.ms-excel">\)|      <MimeTypeDefinition mimeType="application/vnd.openxmlformats-officedocument.spreadsheetml.template">\n        <extension>xltx</extension>\n      </MimeTypeDefinition>\n\1|' pentaho-solutions/system/ImportHandlerMimeTypeDefinitions.xml \
-		&& sed -i -e 's|\(      <MimeTypeDefinition mimeType="application/vnd.ms-excel">\)|      <MimeTypeDefinition mimeType="application/vnd.ms-excel.sheet.macroEnabled.12">\n        <extension>xlsm</extension>\n      </MimeTypeDefinition>\n\1|' pentaho-solutions/system/ImportHandlerMimeTypeDefinitions.xml \
-		&& sed -i -e 's|\(      <MimeTypeDefinition mimeType="application/vnd.ms-excel">\)|      <MimeTypeDefinition mimeType="application/vnd.ms-excel.template.macroEnabled.12">\n        <extension>xltm</extension>\n      </MimeTypeDefinition>\n\1|' pentaho-solutions/system/ImportHandlerMimeTypeDefinitions.xml \
-		&& sed -i -e 's|\(      <MimeTypeDefinition mimeType="application/vnd.ms-excel">\)|      <MimeTypeDefinition mimeType="application/vnd.ms-excel.addin.macroEnabled.12">\n        <extension>xlam</extension>\n      </MimeTypeDefinition>\n\1|' pentaho-solutions/system/ImportHandlerMimeTypeDefinitions.xml \
-		&& sed -i -e 's|\(      <MimeTypeDefinition mimeType="application/vnd.ms-excel">\)|      <MimeTypeDefinition mimeType="application/vnd.ms-excel.sheet.binary.macroEnabled.12">\n        <extension>xlsb</extension>\n      </MimeTypeDefinition>\n\1|' pentaho-solutions/system/ImportHandlerMimeTypeDefinitions.xml \
-		&& sed -i -e 's|\(        <extension>xls</extension>\)|\1\n        <extension>xlt</extension>\n        <extension>xla</extension>|' pentaho-solutions/system/ImportHandlerMimeTypeDefinitions.xml \
-		&& sed -i -e 's|\(        <extension>sql</extension>\)|\1\n        <extension>txt</extension>\n        <extension>csv</extension>|' pentaho-solutions/system/ImportHandlerMimeTypeDefinitions.xml \
+		&& sed -i -e 's|\(      <MimeTypeDefinition mimeType="application/vnd.ms-excel">\)|      <MimeTypeDefinition mimeType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">\n        <extension>xlsx</extension>\n      </MimeTypeDefinition>\n\1|' \
+			-e 's|\(      <MimeTypeDefinition mimeType="application/vnd.ms-excel">\)|      <MimeTypeDefinition mimeType="application/vnd.openxmlformats-officedocument.spreadsheetml.template">\n        <extension>xltx</extension>\n      </MimeTypeDefinition>\n\1|' \
+			-e 's|\(      <MimeTypeDefinition mimeType="application/vnd.ms-excel">\)|      <MimeTypeDefinition mimeType="application/vnd.ms-excel.sheet.macroEnabled.12">\n        <extension>xlsm</extension>\n      </MimeTypeDefinition>\n\1|' \
+			-e 's|\(      <MimeTypeDefinition mimeType="application/vnd.ms-excel">\)|      <MimeTypeDefinition mimeType="application/vnd.ms-excel.template.macroEnabled.12">\n        <extension>xltm</extension>\n      </MimeTypeDefinition>\n\1|' \
+			-e 's|\(      <MimeTypeDefinition mimeType="application/vnd.ms-excel">\)|      <MimeTypeDefinition mimeType="application/vnd.ms-excel.addin.macroEnabled.12">\n        <extension>xlam</extension>\n      </MimeTypeDefinition>\n\1|' \
+			-e 's|\(      <MimeTypeDefinition mimeType="application/vnd.ms-excel">\)|      <MimeTypeDefinition mimeType="application/vnd.ms-excel.sheet.binary.macroEnabled.12">\n        <extension>xlsb</extension>\n      </MimeTypeDefinition>\n\1|' \
+			-e 's|\(        <extension>xls</extension>\)|\1\n        <extension>xlt</extension>\n        <extension>xla</extension>|' \
+			-e 's|\(        <extension>sql</extension>\)|\1\n        <extension>txt</extension>\n        <extension>csv</extension>|' pentaho-solutions/system/ImportHandlerMimeTypeDefinitions.xml \
 		&& sed -i -e 's|\(,csv,\)|\1sql,|' pentaho-solutions/system/*.xml \
 		&& sed -i -e 's|\(,xlsx,\)|\1xltx,xlsm,xltm,xlam,xlsb,|' pentaho-solutions/system/*.xml \
 	&& echo "Add Pentaho user..." \
@@ -82,7 +83,6 @@ RUN echo "Download plugins..." \
 	&& wget -P $BISERVER_HOME/tomcat/webapps/pentaho/WEB-INF/lib https://github.com/zhicwu/saiku/releases/download/3.8.8-SNAPSHOT/saiku-olap-util-3.8.8.jar \
 	&& wget -O btable.zip https://sourceforge.net/projects/btable/files/Version3.0-3.6/BTable-pentaho7-3.6-STABLE.zip/download \
 	&& wget -O saiku-chart-plus.zip http://sourceforge.net/projects/saikuchartplus/files/SaikuChartPlus3/saiku-chart-plus-vSaiku3-plugin-pentaho.zip/download \
-	&& wget -O jamon.zip https://sourceforge.net/projects/jamonapi/files/jamonapi/v2_81/jamonall-2.81.zip/download \
 	&& wget --progress=dot:giga https://github.com/zhicwu/saiku/releases/download/3.8.8-SNAPSHOT/saiku-plugin-p6-3.8.8.zip \
 			https://github.com/zhicwu/cte/releases/download/7.0-SNAPSHOT/cte-7.0-snapshot.zip \
 			http://ctools.pentaho.com/files/d3ComponentLibrary/14.06.18/d3ComponentLibrary-14.06.18.zip \
@@ -91,25 +91,19 @@ RUN echo "Download plugins..." \
 		&& for i in *.zip; do echo "Unpacking $i..." && unzip -q -d pentaho-solutions/system $i && rm -f $i; done \
 		&& rm -f pentaho-solutions/system/BTable/resources/datasources/*.cda \
 	&& echo "Update configuration..." \
-		&& sed -i -e 's|\(<entry key="jpeg" value-ref="streamConverter"/>\)|\1<entry key="saiku" value-ref="streamConverter"/>|' pentaho-solutions/system/importExport.xml \
-		&& sed -i -e 's|\(<value>.xcdf</value>\)|\1<value>.saiku</value>|' pentaho-solutions/system/importExport.xml \
-		&& sed -i -e 's|\(<value>xcdf</value>\)|\1<value>saiku</value>|' pentaho-solutions/system/importExport.xml \
+		&& sed -i -e 's|\(<entry key="jpeg" value-ref="streamConverter"/>\)|\1<entry key="saiku" value-ref="streamConverter"/>|' \
+			-e 's|\(<value>.xcdf</value>\)|\1<value>.saiku</value>|' \
+			-e 's|\(<value>xcdf</value>\)|\1<value>saiku</value>|' pentaho-solutions/system/importExport.xml \
 		&& sed -i -e 's|\(<extension>xcdf</extension>\)|\1<extension>saiku</extension>|' pentaho-solutions/system/ImportHandlerMimeTypeDefinitions.xml \
 		&& touch pentaho-solutions/system/saiku/ui/js/saiku/plugins/CCC_Chart/cdo.js \
 		&& wget -P pentaho-solutions/system/saiku/components/saikuWidget https://github.com/OSBI/saiku/raw/release-3.8/saiku-bi-platform-plugin-p5/src/main/plugin/components/saikuWidget/SaikuWidgetComponent.js \
-		&& sed -i -e "s|\(: data.query.queryModel.axes.FILTER\)\(.*\)|\1 == undefined ? [] \1\2|" pentaho-solutions/system/saiku/ui/js/saiku/embed/SaikuEmbed.js \
-		&& sed -i -e "s|\(: data.query.queryModel.axes.COLUMNS\)\(.*\)|\1 == undefined ? [] \1\2|" pentaho-solutions/system/saiku/ui/js/saiku/embed/SaikuEmbed.js \
-		&& sed -i -e "s|\(: data.query.queryModel.axes.ROWS\)\(.*\)|\1 == undefined ? [] \1\2|" pentaho-solutions/system/saiku/ui/js/saiku/embed/SaikuEmbed.js \
+		&& sed -i -e "s|\(: data.query.queryModel.axes.FILTER\)\(.*\)|\1 == undefined ? [] \1\2|" \
+			-e "s|\(: data.query.queryModel.axes.COLUMNS\)\(.*\)|\1 == undefined ? [] \1\2|" \
+			-e "s|\(: data.query.queryModel.axes.ROWS\)\(.*\)|\1 == undefined ? [] \1\2|" \
+			-e "s|\(request.setRequestHeader('Authorization', auth);\)|// \1|" pentaho-solutions/system/saiku/ui/js/saiku/embed/SaikuEmbed.js \
 		&& sed -i -e 's|\(var query = Saiku.tabs._tabs\[0\].content.query;\)|\1\nif (query == undefined ) query = Saiku.tabs._tabs[1].content.query;|' pentaho-solutions/system/saiku/ui/js/saiku/plugins/BIServer/plugin.js \
-		&& sed -i -e 's|self.template()|"Error!"|' pentaho-solutions/system/saiku/ui/saiku.min.js \
-		&& sed -i -e 's|http://meteorite.bi/|/|' pentaho-solutions/system/saiku/ui/saiku.min.js \
-		&& sed -i -e "s|\(request.setRequestHeader('Authorization', auth);\)|// \1|" pentaho-solutions/system/saiku/ui/js/saiku/embed/SaikuEmbed.js \
-	&& echo "Enable JAMon API..." \
-		&& mv pentaho-solutions/system/jamonall-2.81/jamon-2.81.jar tomcat/lib/. \
-		&& unzip -q -d tomcat/webapps/jamon pentaho-solutions/system/jamonall-2.81/jamon.war \
-		&& rm -rf pentaho-solutions/system/__MACOSX tomcat/webapps/jamon/WEB-INF/lib/hsqldb.jar *.zip \
-		&& rm -rf pentaho-solutions/system/jamonall* \
-		&& sed -i -e 's|\(<Engine name="Catalina" defaultHost="localhost">\)|\1\n      <Valve className="com.jamonapi.http.JAMonTomcatValve"/>|' tomcat/conf/server.xml
+		&& sed -i -e 's|self.template()|"Error!"|' \
+			-e 's|http://meteorite.bi/|/|' pentaho-solutions/system/saiku/ui/saiku.min.js
 
 # Download patches and dependencies
 RUN echo "Download patches and dependencies..." \
