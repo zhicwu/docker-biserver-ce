@@ -12,7 +12,7 @@ MAINTAINER Zhichun Wu <zhicwu@gmail.com>
 ENV BISERVER_VERSION=7.1 BISERVER_BUILD=7.1.0.0-12 PDI_PATCH=7.1.0.0 \
 	BISERVER_HOME=/biserver-ce BISERVER_USER=pentaho \
 	KETTLE_HOME=/biserver-ce/pentaho-solutions/system/kettle \
-	JNA_VERSION=4.2.2 OSHI_VERSION=3.4.0 POSTGRESQL_DRIVER_VERSION=9.4.1212 \
+	POSTGRESQL_DRIVER_VERSION=9.4.1212 \
 	MYSQL_DRIVER_VERSION=5.1.42 JTDS_VERSION=1.3.1 CASSANDRA_DRIVER_VERSION=0.6.3 \
 	H2DB_VERSION=1.4.195 HSQLDB_VERSION=2.4.0 XMLA_PROVIDER_VERSION=1.0.0.103
 
@@ -34,7 +34,7 @@ RUN echo "Download and unpack Pentaho server..." \
 		&& tar zxf $BISERVER_HOME/tomcat/bin/tomcat-native.tar.gz \
 		&& cd tomcat-native*/native \
 		&& apt-get update \
-		&& apt-get install -y libjna-java libapr1-dev gcc make \
+		&& apt-get install -y libapr1-dev gcc make \
 		&& ./configure --with-apr=/usr/bin/apr-config --disable-openssl --with-java-home=$JAVA_HOME --prefix=$BISERVER_HOME/tomcat \
 		&& make \
 		&& make install \
@@ -107,10 +107,6 @@ RUN echo "Download plugins..." \
 
 # Download patches and dependencies
 RUN echo "Download patches and dependencies..." \
-	&& wget https://maven.java.net/content/repositories/releases/net/java/dev/jna/jna/$JNA_VERSION/jna-$JNA_VERSION.jar \
-			https://maven.java.net/content/repositories/releases/net/java/dev/jna/jna-platform/$JNA_VERSION/jna-platform-$JNA_VERSION.jar \
-			http://central.maven.org/maven2/com/github/dblock/oshi-core/$OSHI_VERSION/oshi-core-$OSHI_VERSION.jar \
-	&& mv *.jar tomcat/webapps/pentaho/WEB-INF/lib/. \
 	&& wget --progress=dot:giga https://github.com/zhicwu/pdi-cluster/releases/download/${PDI_PATCH}/pentaho-kettle-${PDI_PATCH}.jar \
 			https://github.com/zhicwu/pdi-cluster/releases/download/${PDI_PATCH}/pentaho-platform-${PDI_PATCH}.jar
 
