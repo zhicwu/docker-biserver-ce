@@ -23,7 +23,7 @@ ubuntu:16.04
  * [XMLA Provider](https://sourceforge.net/projects/xmlaconnect/) 1.0.0.103 - download from Help -> Document popup and install on your windows box
 
 ## Known issue
-- Not able to import mondrian schema in console, you'll have to use schema workbench to publish schema to BI server
+- [BISERVER-13649](http://jira.pentaho.com/browse/BISERVER-13649)
 
 ## Get started
 - Run vanilla Pentaho server
