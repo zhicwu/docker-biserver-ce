@@ -115,7 +115,7 @@ COPY purge-old-files.sh /etc/cron.hourly/purge-old-files.sh
 # Post configuration
 RUN echo "Post configuration..." \
 	&& chmod 0700 /etc/cron.hourly/* \
-	&& chmod +x $BISERVER_HOME/*.sh 、
+	&& chmod +x $BISERVER_HOME/*.sh \
 	&& ln -s $JMX_EXPORTER_FILE tomcat/bin/jmx-exporter.jar
 
 ENTRYPOINT ["/sbin/my_init", "--", "./docker-entrypoint.sh"]
