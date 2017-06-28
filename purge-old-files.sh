@@ -1,6 +1,8 @@
 #!/bin/bash
 [ "$TRACE" ] && set -x
 
+: ${BISERVER_HOME:="/biserver-ce"}
+
 _LOG_FILE=$BISERVER_HOME/tomcat/logs/purge.log
 
 [ -f ${_LOG_FILE}.old ] && rm -f ${_LOG_FILE}.old
