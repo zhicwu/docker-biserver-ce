@@ -5,14 +5,14 @@ Pentaho BI server(community edition) docker image. https://hub.docker.com/r/zhic
 ```
 ubuntu:16.04
  |
- |-- phusion/baseimage:latest
+ |-- phusion/baseimage:0.9.22
       |
       |-- zhicwu/java:8
            |
            |-- zhicwu/biserver-ce:7.1
 ```
 * Official Ubuntu 16.04 LTS docker image
-* Latest [Phusion Base Image](https://github.com/phusion/baseimage-docker)
+* [Phusion Base Image](https://github.com/phusion/baseimage-docker) 0.9.22
 * Oracle JDK 8 latest release
 * [Pentaho BI Server Community Edition](http://community.pentaho.com/) 7.1.0.0-12 with plugins and patches:
  * [BTable](https://sourceforge.net/projects/btable/)
@@ -24,6 +24,7 @@ ubuntu:16.04
 
 ## Known issue
 - [BISERVER-13649](http://jira.pentaho.com/browse/BISERVER-13649)
+- Saiku cannot open or save file
 
 ## Get started
 - Run vanilla Pentaho server

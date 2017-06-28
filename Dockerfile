@@ -117,7 +117,7 @@ COPY purge-old-files.sh /usr/local/bin/purge-old-files.sh
 
 # Post configuration
 RUN echo "Post configuration..." \
-	&& echo "11 * * * * /usr/local/bin/purge-old-files.sh" > /var/spool/cron/crontabs/root \
+	&& echo "11 * * * * /usr/local/bin/purge-old-files.sh 2>>/var/log/cron.log" > /var/spool/cron/crontabs/root \
 	&& chmod 0600 /var/spool/cron/crontabs/root \
 	&& wget -P /usr/local/bin/ https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh \
 	&& chmod +x /usr/local/bin/*.sh $BISERVER_HOME/*.sh \
