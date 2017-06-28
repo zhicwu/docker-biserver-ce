@@ -1,5 +1,5 @@
 #!/bin/bash
-[[ "$TRACE" ]] && set -x
+[ "$TRACE" ] && set -x
 
 _LOG_FILE=$BISERVER_HOME/tomcat/logs/purge.log
 
@@ -7,7 +7,7 @@ _LOG_FILE=$BISERVER_HOME/tomcat/logs/purge.log
 [ -f ${_LOG_FILE} ] && mv $_LOG_FILE ${_LOG_FILE}.old
 
 log() {
-  [[ "$2" ]] && echo "[`date +'%Y-%m-%d %H:%M:%S.%N'`] - $1 - $2" >> $_LOG_FILE
+  [ "$2" ] && echo "[`date +'%Y-%m-%d %H:%M:%S.%N'`] - $1 - $2" >> $_LOG_FILE
 }
 
 log "INFO" "Removing temporary files modified and read two days ago(or older) under $BISERVER_HOME/tomcat/temp directory..."

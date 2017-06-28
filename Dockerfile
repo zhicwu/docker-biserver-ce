@@ -113,12 +113,14 @@ RUN echo "Download patches and dependencies..." \
 # Add entry point, tempaltes and cron jobs
 COPY docker-entrypoint.sh $BISERVER_HOME/docker-entrypoint.sh
 COPY repository.xml.template $BISERVER_HOME/pentaho-solutions/system/jackrabbit/repository.xml.template
-COPY purge-old-files.sh /etc/cron.hourly/purge-old-files
+COPY purge-old-files.sh /usr/local/bin/purge-old-files.sh
 
 # Post configuration
 RUN echo "Post configuration..." \
-	&& chmod 0700 /etc/cron.hourly/* \
-	&& chmod +x $BISERVER_HOME/*.sh \
+	&& echo "11 * * * * /usr/local/bin/purge-old-files.sh" > /var/spool/cron/crontabs/root \
+	&& chmod 0600 /var/spool/cron/crontabs/root \
+	&& wget -P /usr/local/bin/ https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh \
+	&& chmod +x /usr/local/bin/*.sh $BISERVER_HOME/*.sh \
 	&& ln -s $JMX_EXPORTER_FILE tomcat/bin/jmx-exporter.jar
 
 ENTRYPOINT ["/sbin/my_init", "--", "./docker-entrypoint.sh"]

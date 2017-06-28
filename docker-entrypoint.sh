@@ -106,6 +106,8 @@ update_db() {
 		driverClassName='${DATABASE_DRIVER}' url='${DATABASE_QUARTZ_URL}'
 		validationQuery='${DATABASE_VALIDATION_QUERY}' />
 </Context>" > tomcat/webapps/pentaho/META-INF/context.xml
+
+	/usr/local/bin/wait-for-it.sh -t 0 $DATABASE_HOST:$DATABASE_PORT -- echo Database is UP
 }
 
 init_biserver() {
