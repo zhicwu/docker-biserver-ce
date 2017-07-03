@@ -12,9 +12,9 @@ MAINTAINER Zhichun Wu <zhicwu@gmail.com>
 ENV BISERVER_VERSION=7.1 BISERVER_BUILD=7.1.0.0-12 PDI_PATCH=7.1.0.0 \
 	BISERVER_HOME=/biserver-ce BISERVER_USER=pentaho \
 	KETTLE_HOME=/biserver-ce/pentaho-solutions/system/kettle \
-	POSTGRESQL_DRIVER_VERSION=9.4.1212 \
+	POSTGRESQL_DRIVER_VERSION=42.1.1 \
 	MYSQL_DRIVER_VERSION=5.1.42 JTDS_VERSION=1.3.1 CASSANDRA_DRIVER_VERSION=0.6.3 \
-	H2DB_VERSION=1.4.195 HSQLDB_VERSION=2.4.0 XMLA_PROVIDER_VERSION=1.0.0.103
+	H2DB_VERSION=1.4.196 HSQLDB_VERSION=2.4.0 XMLA_PROVIDER_VERSION=1.0.0.103
 
 # Set label
 LABEL java_server="Pentaho BA Server $BISERVER_VERSION Community Edition"
@@ -34,7 +34,7 @@ RUN echo "Download and unpack Pentaho server..." \
 		&& tar zxf $BISERVER_HOME/tomcat/bin/tomcat-native.tar.gz \
 		&& cd tomcat-native*/native \
 		&& apt-get update \
-		&& apt-get install -y libapr1-dev gcc make \
+		&& apt-get install -y xvfb libapr1-dev gcc make \
 		&& ./configure --with-apr=/usr/bin/apr-config --disable-openssl --with-java-home=$JAVA_HOME --prefix=$BISERVER_HOME/tomcat \
 		&& make \
 		&& make install \
@@ -127,10 +127,11 @@ ENTRYPOINT ["/sbin/my_init", "--", "./docker-entrypoint.sh"]
 
 #VOLUME ["$BISERVER_HOME/.pentaho", "$BISERVER_HOME/data/hsqldb", "$BISERVER_HOME/tomcat/logs", "$BISERVER_HOME/pentaho-solutions/system/jackrabbit/repository", "$BISERVER_HOME/tmp"]
 
+#  1234 - JMX Exporter(for Prometheus)
 #  8080 - HTTP
 #  8009 - AJP
 # 11098 - JMX RMI Registry
 # 44444 - RMI Server
-#EXPOSE 8080 8009 11098 44444
+#EXPOSE 1234 8080 8009 11098 44444
 
 #CMD ["biserver"]
