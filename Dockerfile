@@ -45,7 +45,8 @@ RUN echo "Download and unpack Pentaho server..." \
 		&& rm -rf /var/lib/apt/lists/* \
 	&& echo "Update server configuration..." \
 		&& cd $BISERVER_HOME \
-		&& sed -i -e 's/\(exec ".*"\) start/\1 run/' tomcat/bin/startup.sh
+		&& sed -i -e 's/\(exec ".*"\) start/\1 run/' tomcat/bin/startup.sh \
+		&& rm -f promptuser.*
 
 # Change work directory
 WORKDIR $BISERVER_HOME
