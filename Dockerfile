@@ -72,7 +72,7 @@ RUN echo "Download patches and dependencies..." \
 		&& wget --progress=dot:giga https://github.com/zhicwu/pdi-cluster/releases/download/${PDI_PATCH}/pentaho-kettle-${PDI_PATCH}.jar \
 			https://github.com/zhicwu/pdi-cluster/releases/download/${PDI_PATCH}/pentaho-platform-${PDI_PATCH}.jar \
 		&& chmod +x /usr/local/bin/*.sh \
-	echo "Applying patches..." \
+	&& echo "Applying patches..." \
 		&& mkdir -p patches \
 		&& unzip -q pentaho-kettle*.jar -d patches \
 		&& unzip -oq pentaho-platform*.jar -d patches \
