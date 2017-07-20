@@ -11,24 +11,17 @@ services:
       - "${SERVER_HTTP_PORT}:8080"
       - "${SERVER_AJP_PORT}:8009"
     volumes:
-      - ./ext:/bi-ext:ro
-      - ./data/.pentaho:/biserver-ce/.pentaho:rw
-      - ./data/hsqldb:/biserver-ce/data/hsqldb:rw
-      - ./data/logs:/biserver-ce/tomcat/logs:rw
-      - ./data/repository:/biserver-ce/pentaho-solutions/system/jackrabbit/repository:rw
-      - ./data/tmp:/biserver-ce/tmp:rw
+      - ./data/.pentaho:/biserver-ce/.pentaho
+      - ./data/hsqldb:/biserver-ce/data/hsqldb
+      - ./data/logs:/biserver-ce/tomcat/logs
+      - ./data/repository:/biserver-ce/pentaho-solutions/system/jackrabbit/repository
+      - ./data/tmp:/biserver-ce/tmp
     environment:
-      APPLY_PATCHES: Y
       BI_JAVA_OPTS: '${BI_JAVA_OPTS}'
       HOST_USER_ID: ${HOST_USER_ID}
       STORAGE_TYPE: ${STORAGE_TYPE}
-      PDI_HADOOP_CONFIG: ${PDI_HADOOP_CONFIG}
-      PDI_MAX_LOG_LINES: ${PDI_MAX_LOG_LINES}
-      PDI_MAX_LOG_TIMEOUT: ${PDI_MAX_LOG_TIMEOUT}
-      PDI_MAX_OBJ_TIMEOUT: ${PDI_MAX_OBJ_TIMEOUT}
-      SERVER_NAME: ${SERVER_NAME}
       SERVER_HOST: ${SERVER_HOST}
-      SERVER_PORT: ${SERVER_EXT_PORT}
+      SERVER_URL: ${SERVER_URL}
     # still need below even using docker engine 1.12
     # see more at https://github.com/docker/docker/issues/21051 and https://docs.docker.com/engine/security/seccomp/
     security_opt:
