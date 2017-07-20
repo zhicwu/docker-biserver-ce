@@ -15,6 +15,7 @@ ENV BISERVER_USER=pentaho PDI_PATCH=7.1.0.0 JMX_EXPORTER_VERSION=0.7
 RUN echo "Update server configuration..." \
 		&& mkdir -p $BISERVER_HOME/data/.hsqldb \
 		&& /bin/cp -rf $BISERVER_HOME/data/hsqldb/* $BISERVER_HOME/data/.hsqldb/. \
+		&& rm -f pentaho-solutions/system/BTable/resources/datasources/*.cda \
 		&& sed -i -e 's|\(<entry key="jpeg" value-ref="streamConverter"/>\)|\1<entry key="saiku" value-ref="streamConverter"/>|' \
 			-e 's|\(<value>.xcdf</value>\)|\1<value>.saiku</value>|' \
 			-e 's|\(<value>xcdf</value>\)|\1<value>saiku</value>|' pentaho-solutions/system/importExport.xml \
