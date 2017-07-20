@@ -26,37 +26,14 @@ ubuntu:16.04
     * [Saiku](http://community.meteorite.bi/) - enabled SaikuWidgetComponent in CDE
     * [XMLA Provider](https://sourceforge.net/projects/xmlaconnect/) 1.0.0.103 - download from Help -> Document popup and install on your windows box
 
-## Known issue
-- [BISERVER-13649](http://jira.pentaho.com/browse/BISERVER-13649)
-- Saiku cannot open or save file
-
-## Get started
-- Use docker-compose(Recommended)
+## Quick Start
 ```
-$ git clone https://github.com/zhicwu/docker-biserver-ce.git -b 7.1 --single-branch
-$ cd docker-biserver-ce
-... edit .env and/or docker-compose.yml based on your needs, put your Pentaho configuration files under ext directory if necessary ...
-$ docker-compose up -d
-$ docker-compose logs -f
-```
-- Simple CLI
-```
-$ docker run --name bi -p 8080:8080 -p 12345:1234 -d zhicwu/biserver-ce:7.1-full
+$ docker run --name bi -p 8080:8080 -d zhicwu/biserver-ce:7.1-full
 $ docker logs -f bi
 ```
-Regardless which approach you took, after server started, you should be able to access [Pentaho Server](http://localhost:8080)(admin/password) and [monitor metrics](http://localhost:12345/metrics) using [Prometheus](https://prometheus.io/) and [Grafana](https://grafana.com/).
+Now you should be able to access Pentaho Server at http://localhost:8080
 
-## How to use external database
-Taking MySQL 5.x as an example. Assuming you have pbi_repository, pbi_quartz and pdi_jcr 3 databases created, change docker-compose.yml to set STORAGE_TYPE to mysql5, and then mount volume `./database.env:/biserver-ce/database.env` with the following content:
-```
-SERVER_PASSWD=password
-DB_HOST=xxx
-DB_PORT=3306
-DB_USER=xxx
-DB_PASSWD=xxx
-```
-
-## How to build
+## How to Build
 ```
 $ git clone https://github.com/zhicwu/docker-biserver-ce.git -b 7.1-full --single-branch
 $ cd docker-biserver-ce
