@@ -40,7 +40,7 @@ RUN echo "Download and unpack Pentaho server..." \
 			-e 's|\(<Engine name="Catalina" defaultHost="localhost">\)|\1\n      <Valve className="org.apache.catalina.valves.RemoteIpValve" internalProxies=".*" remoteIpHeader="x-forwarded-for" remoteIpProxiesHeader="x-forwarded-by" protocolHeader="x-forwarded-proto" />|' $BISERVER_HOME/tomcat/conf/server.xml \
 		&& cd / \
 		&& rm -rf build $BISERVER_HOME/tomcat/bin/tomcat-native.tar.gz \
-		&& apt-get autoremove -y libapr1-dev gcc make \
+		&& apt-get autoremove -y gcc make \
 		&& apt-get clean \
 		&& rm -rf /var/lib/apt/lists/* \
 	&& echo "Update server configuration..." \
