@@ -113,9 +113,9 @@ update_db() {
 init_biserver() {
 	if [ ! -f $BISERVER_HOME/.initialized ]; then
 		echo "Initializing BI server..."
-		rm -rf .pentaho/* tmp/* pentaho-solutions/system/jackrabbit/repository/* /tmp/kettle tomcat/temp tomcat/work \
+		rm -rf .pentaho/* tmp/* pentaho-solutions/system/jackrabbit/repository/* /tmp/kettle tomcat/temp tomcat/work pentaho-solutions/system/kettle/slave-server-config.xml \
 			&& mkdir -p tmp/kettle tmp/osgi/cache tmp/osgi/data/log tmp/osgi/data/tmp tmp/tomcat/temp tmp/tomcat/work \
-				tomcat/logs/audit pentaho-solutions/system/logs pentaho-solutions/system/kettle/slave-server-config.xml \
+				tomcat/logs/audit pentaho-solutions/system/logs \
 			&& ln -s $BISERVER_HOME/tmp/kettle /tmp/kettle \
 			&& ln -s $BISERVER_HOME/tmp/tomcat/temp tomcat/temp \
 			&& ln -s $BISERVER_HOME/tmp/tomcat/work tomcat/work \

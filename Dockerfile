@@ -108,7 +108,8 @@ COPY purge-old-files.sh /usr/local/bin/purge-old-files.sh
 # sed -i -e 's|\(.*<default-theme>\).*\(</default-theme>\)|\1crystal\2|' pentaho-solutions/system/pentaho.xml
 RUN echo "Post configuration..." \
 	&& echo "11 * * * * /usr/local/bin/purge-old-files.sh 2>>/var/log/cron.log" > /var/spool/cron/crontabs/root \
-	&& chmod 0600 /var/spool/cron/crontabs/root
+	&& chmod 0600 /var/spool/cron/crontabs/root \
+	&& chmod +x *.sh /usr/local/bin/*.sh
 
 ENTRYPOINT ["/sbin/my_init", "--", "./docker-entrypoint.sh"]
 
