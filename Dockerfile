@@ -45,7 +45,7 @@ RUN echo "Download and unpack Pentaho server..." \
 		&& rm -rf /var/lib/apt/lists/* \
 	&& echo "Update server configuration..." \
 		&& cd $BISERVER_HOME \
-		&& sed -i -e 's|\(exec ".*"\) start||export LD_LIBRARY_PATH=$BISERVER_HOME/tomcat/lib:$LD_LIBRARY_PATH\n\n\1 run/' tomcat/bin/startup.sh \
+		&& sed -i -e 's|\(exec ".*"\) start|export LD_LIBRARY_PATH=$BISERVER_HOME/tomcat/lib:$LD_LIBRARY_PATH\n\n\1 run|' tomcat/bin/startup.sh \
 		&& rm -f promptuser.*
 
 # Change work directory
