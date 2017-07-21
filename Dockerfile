@@ -9,7 +9,7 @@ FROM zhicwu/biserver-ce:7.1-full
 MAINTAINER Zhichun Wu <zhicwu@gmail.com>
 
 # Set environment variables
-ENV BISERVER_USER=pentaho PDI_PATCH=7.1.0.0 JMX_EXPORTER_VERSION=0.7
+ENV BISERVER_USER=pentaho PDI_PATCH=7.1.0.0 JMX_EXPORTER_VERSION=0.9
 
 # Update server configuration
 RUN echo "Update server configuration..." \
