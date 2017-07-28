@@ -72,12 +72,11 @@ RUN echo "Download patches and dependencies..." \
 		&& wget -O tomcat/bin/jmx-exporter.jar http://central.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/${JMX_EXPORTER_VERSION}/jmx_prometheus_javaagent-${JMX_EXPORTER_VERSION}.jar \
 		&& wget --progress=dot:giga https://github.com/zhicwu/pdi-cluster/releases/download/${PDI_PATCH}/pentaho-kettle-${PDI_PATCH}.jar \
 			https://github.com/zhicwu/pdi-cluster/releases/download/${PDI_PATCH}/pentaho-platform-${PDI_PATCH}.jar \
-			https://github.com/zhicwu/saiku/releases/download/3.14.1/saiku-3.14-patch.zip \
+			https://github.com/zhicwu/saiku/releases/download/3.8.8-SNAPSHOT/saiku-plugin-p6-3.8.8.zip \
 		&& chmod +x /usr/local/bin/*.sh \
 	&& echo "Applying patches..." \
-		&& rm -f pentaho-solutions/system/saiku/lib/batik-*-1.7.jar \
-			pentaho-solutions/system/saiku/lib/cpf-*-353.jar \
-		&& unzip -o saiku*.zip -d pentaho-solutions/system/saiku/lib \
+		&& rm -rf pentaho-solutions/system/saiku \
+		&& unzip -o saiku*.zip -d pentaho-solutions/system/ \
 		&& mkdir -p patches \
 		&& unzip -q pentaho-kettle*.jar -d patches \
 		&& unzip -oq pentaho-platform*.jar -d patches \
@@ -89,6 +88,8 @@ RUN echo "Download patches and dependencies..." \
 		&& $JAVA_HOME/bin/jar uf ../pentaho-solutions/system/kettle/plugins/pdi-pur-plugin/pdi-pur-plugin-${BISERVER_BUILD}.jar org/pentaho/di/repository/pur/LazyUnifiedRepositoryDirectory.class \
 		&& $JAVA_HOME/bin/jar uf ../pentaho-solutions/system/pdi-pur-plugin/lib/pdi-pur-plugin-${BISERVER_BUILD}.jar org/pentaho/di/repository/pur/LazyUnifiedRepositoryDirectory.class \
 		&& $JAVA_HOME/bin/jar uf ../pentaho-solutions/system/pdi-pur-plugin/pdi-pur-plugin-${BISERVER_BUILD}.jar org/pentaho/di/repository/pur/LazyUnifiedRepositoryDirectory.class \
+		&& rm -rf org/pentaho/di/repository/pur \
+		&& $JAVA_HOME/bin/jar uf ../tomcat/webapps/pentaho/WEB-INF/lib/kettle-engine-${BISERVER_BUILD}.jar org/pentaho/di/repository \
 		&& rm -rf org/pentaho/di/repository \
 		&& $JAVA_HOME/bin/jar uf ../tomcat/webapps/pentaho/WEB-INF/lib/kettle-core-${BISERVER_BUILD}.jar org/pentaho/di/core/database \
 		&& $JAVA_HOME/bin/jar uf ../tomcat/webapps/pentaho/WEB-INF/lib/kettle-core-${BISERVER_BUILD}.jar org/pentaho/di/core/row \
