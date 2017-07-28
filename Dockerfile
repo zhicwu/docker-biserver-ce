@@ -72,11 +72,12 @@ RUN echo "Download patches and dependencies..." \
 		&& wget -O tomcat/bin/jmx-exporter.jar http://central.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/${JMX_EXPORTER_VERSION}/jmx_prometheus_javaagent-${JMX_EXPORTER_VERSION}.jar \
 		&& wget --progress=dot:giga https://github.com/zhicwu/pdi-cluster/releases/download/${PDI_PATCH}/pentaho-kettle-${PDI_PATCH}.jar \
 			https://github.com/zhicwu/pdi-cluster/releases/download/${PDI_PATCH}/pentaho-platform-${PDI_PATCH}.jar \
-			https://github.com/zhicwu/saiku/releases/download/3.8.8-SNAPSHOT/saiku-plugin-p6-3.8.8.zip \
+			https://github.com/zhicwu/saiku/releases/download/3.14.1/saiku-3.14-patch.zip \
 		&& chmod +x /usr/local/bin/*.sh \
 	&& echo "Applying patches..." \
-		&& rm -rf pentaho-solutions/system/saiku \
-		&& unzip -o saiku*.zip -d pentaho-solutions/system/ \
+		&& rm -f pentaho-solutions/system/saiku/lib/batik-*-1.7.jar \
+			pentaho-solutions/system/saiku/lib/cpf-*-353.jar \
+		&& unzip -o saiku*.zip -d pentaho-solutions/system/saiku/lib \
 		&& mkdir -p patches \
 		&& unzip -q pentaho-kettle*.jar -d patches \
 		&& unzip -oq pentaho-platform*.jar -d patches \
