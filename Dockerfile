@@ -63,6 +63,7 @@ RUN echo "Update server configuration..." \
 		&& find . -name "*.css"  -type f | xargs sed -i -e 's|http.*googleusercontent\.com||' \
 		&& find . -name "*ga.js" -type f | xargs sed -i -e 's|//www\.google\-analytics\.com||' \
 		&& find . -name "*ga.js" -type f | xargs sed -i -e 's|\?"https\://ssl"\:"http\://www"|?"/":"/"|' \
+		&& sed -i -e 's|\(            var xhr = text.createXhr(), header;\)|            url = url.replace(/https:\&name=\\/.*\\/pentaho\\/content\\/([a-zA-Z0-9\\-_]+)\\//mg, "\\$1\&name=");\n\1|' pentaho-solutions/system/common-ui/resources/web/util/require-text/text.js \
 	&& echo "Add Pentaho user..." \
 		&& useradd -Md $BISERVER_HOME -s /bin/bash $BISERVER_USER
 
