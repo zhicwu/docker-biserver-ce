@@ -66,6 +66,8 @@ RUN echo "Update server configuration..." \
 		&& sed -i -e 's|\(            var xhr = text.createXhr(), header;\)|            url = url.replace(/https:\&name=\\/.*\\/pentaho\\/content\\/([a-zA-Z0-9\\-_]+)\\//mg, "\\$1\&name=");\n\1|' \
 			pentaho-solutions/system/common-ui/resources/web/util/require-text/text.js \
 			pentaho-solutions/system/pentaho-cdf/js/lib/require-text/text.js \
+		&& sed -i -e 's|\(        localRequire(\)|        bundleUrl = bundleUrl.replace(/https:\&name=\\/.*\\/pentaho\\/content\\/([a-zA-Z0-9\\-_]+)\\//mg, "\\$1\&name=");\n\1|' \
+			pentaho-solutions/system/common-ui/resources/web/pentaho/i18n.js \
 		&& find . -name "jquery.dataTables.js" -type f | xargs sed -i -e 's|\(s.nTHead.parentNode == this\)|(s.nTHead \&\& \1)|' \
 	&& echo "Add Pentaho user..." \
 		&& useradd -Md $BISERVER_HOME -s /bin/bash $BISERVER_USER
