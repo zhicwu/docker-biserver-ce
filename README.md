@@ -4,14 +4,18 @@ Base docker image of Pentaho Server(community edition). https://hub.docker.com/r
 ## Hierarchy
 ```
 ubuntu:16.04
- |- phusion/baseimage:0.9.22
-    |- zhicwu/java:8
-       |- zhicwu/biserver-ce:7.1-base
+  |
+  |--- phusion/baseimage:0.9.22
+    |
+    |--- zhicwu/java:8
+      |
+      |--- zhicwu/biserver-ce:7.1-base
 ```
 * Official Ubuntu 16.04 LTS docker image
 * [Phusion Base Image](https://github.com/phusion/baseimage-docker) 0.9.22
-* Oracle JDK 8 latest release
-* [Pentaho BI Server Community Edition](http://community.pentaho.com/) 7.1.0.0-12 with APR
+* Oracle JDK 8u144
+* [Pentaho BI Server Community Edition](http://community.pentaho.com/) 7.1.0.5-67
+* Apache Tomcat 8.0.47 with APR
 
 ## Quick Start
 ```
