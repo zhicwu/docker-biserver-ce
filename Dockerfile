@@ -25,6 +25,7 @@ RUN apt-get update \
 	&& find $BISERVER_HOME -name "*.exe" -delete \
 	&& rm -f $BISERVER_HOME/promptuser.* \
 	&& chmod +x $BISERVER_HOME/*.sh \
+	&& sed -i -e 's|-XX:MaxPermSize=256m|-XX:MaxMetaspaceSize=256m -Djava.security.egd=file:/dev/./urandom|' $BISERVER_HOME/start-pentaho.sh \
 	&& sed -i -e 's|\(<Engine name="Catalina" defaultHost="localhost">\)|\1\n      <Valve className="org.apache.catalina.valves.RemoteIpValve" internalProxies=".*" remoteIpHeader="x-forwarded-for" proxiesHeader="x-forwarded-by" protocolHeader="x-forwarded-proto" />|' $BISERVER_HOME/tomcat/conf/server.xml \
 	&& sed -i -e 's|\(exec ".*"\) start|export LD_LIBRARY_PATH=$BISERVER_HOME/tomcat/lib:$LD_LIBRARY_PATH\n\n\1 run|' $BISERVER_HOME/tomcat/bin/startup.sh \
 	&& mkdir -p /tmp/build \
@@ -53,8 +54,8 @@ FROM zhicwu/java:8
 MAINTAINER Zhichun Wu <zhicwu@gmail.com>
 
 # Set environment variables
-ENV BISERVER_VERSION=7.1.0.5 BISERVER_HOME=/biserver-ce \
-	KETTLE_HOME=/biserver-ce/pentaho-solutions/system/kettle
+ENV BISERVER_VERSION=7.1.0.5-67 \
+	BISERVER_HOME=/biserver-ce KETTLE_HOME=/biserver-ce/pentaho-solutions/system/kettle
 
 # Set label
 LABEL java_server="Pentaho Server $BISERVER_VERSION Community Edition"
