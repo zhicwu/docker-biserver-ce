@@ -34,7 +34,14 @@ RUN apt-get update \
 	&& ./configure --prefix=$BISERVER_HOME/tomcat \
 	&& make \
 	&& make install \
-	&& rm -f $BISERVER_HOME/tomcat/bin/tomcat-native.tar.gz
+	&& rm -f $BISERVER_HOME/tomcat/bin/tomcat-native.tar.gz \
+	&& cd /tmp/build \
+	&& wget https://www.openssl.org/source/openssl-1.1.0f.tar.gz \
+	&& tar zxf openssl-1.1*.tar.gz \
+	&& cd openssl-1.1* \
+	&& ./config -Wl,--enable-new-dtags,-rpath,'$(LIBRPATH)' \
+	&& make \
+	&& mv lib*.so.1.1 $BISERVER_HOME/tomcat/lib/.
 
 
 #
