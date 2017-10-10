@@ -9,7 +9,7 @@ FROM zhicwu/biserver-ce:7.1-base
 MAINTAINER Zhichun Wu <zhicwu@gmail.com>
 
 # Set environment variables
-ENV POSTGRESQL_DRIVER_VERSION=42.1.3 MYSQL_DRIVER_VERSION=5.1.42 \
+ENV POSTGRESQL_DRIVER_VERSION=42.1.4 MYSQL_DRIVER_VERSION=5.1.44 \
 	JTDS_VERSION=1.3.1 CASSANDRA_DRIVER_VERSION=0.6.4 \
 	H2DB_VERSION=1.4.196 HSQLDB_VERSION=2.4.0 XMLA_PROVIDER_VERSION=1.0.0.103
 
@@ -29,9 +29,10 @@ RUN echo "Download and install JDBC drivers..." \
 RUN echo "Download plugins..." \
 	&& wget -O btable.zip https://sourceforge.net/projects/btable/files/Version3.0-3.6/BTable-pentaho7-3.6-STABLE.zip/download \
 	&& wget -O saiku-chart-plus.zip http://sourceforge.net/projects/saikuchartplus/files/SaikuChartPlus3/saiku-chart-plus-vSaiku3-plugin-pentaho.zip/download \
-	&& wget --progress=dot:giga  http://meteorite.bi/downloads/saiku-plugin-p7-3.14.zip \
+	&& wget --progress=dot:giga  http://meteorite.bi/downloads/saiku-plugin-p7-3.15.zip \
 			https://github.com/zhicwu/cte/releases/download/7.1-SNAPSHOT/cte-7.1-SNAPSHOT.zip \
-			http://ctools.pentaho.com/files/d3ComponentLibrary/14.06.18/d3ComponentLibrary-14.06.18.zip \
+			http://ctools.pentaho.com/files/d3ComponentLibrary/17.07.24/d3ComponentLibrary-17.07.24.zip \
 			https://github.com/rpbouman/pash/raw/master/bin/pash.zip \
+			http://ctools.pentaho.com/files/cdv/17.05.12/7.x/cdv-7.1-17.05.12.zip \
 	&& echo "Installing plugins..." \
 		&& for i in *.zip; do echo "Unpacking $i..." && unzip -q -d pentaho-solutions/system $i && rm -f $i; done

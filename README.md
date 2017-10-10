@@ -4,21 +4,26 @@ Pentaho BI server(community edition) docker image. https://hub.docker.com/r/zhic
 ## Hierarchy
 ```
 ubuntu:16.04
- |- phusion/baseimage:0.9.22
-    |- zhicwu/java:8
-       |- zhicwu/biserver-ce:7.1-base
-          |- zhicwu/biserver-ce:7.1-full
+  |
+  |--- phusion/baseimage:0.9.22
+    |
+    |--- zhicwu/java:8
+      |
+      |--- zhicwu/biserver-ce:7.1-base
+        |
+        |--- zhicwu/biserver-ce:7.1-full
 ```
 * Official Ubuntu 16.04 LTS docker image
 * [Phusion Base Image](https://github.com/phusion/baseimage-docker) 0.9.22
-* Oracle JDK 8 latest release
-* [Pentaho BI Server Community Edition](http://community.pentaho.com/) 7.1.0.0-12 with plugins and patches
+* Oracle JDK 8u144
+* [Pentaho BI Server Community Edition](http://community.pentaho.com/) 7.1.0.5-67 with plugins and patches
     * [BTable](https://sourceforge.net/projects/btable/)
     * [Community Text Editor](http://www.webdetails.pt/ctools/cte/)
+    * [Community Data Validation](http://www.webdetails.pt/ctools/cdv/)
     * [D3 Component Library](https://github.com/webdetails/d3ComponentLibrary)
     * Up-to-date JDBC drivers:
-        * [PostgreSQL JDBC Driver](https://jdbc.postgresql.org/) 42.1.3
-        * [MySQL Connector/J](http://dev.mysql.com/downloads/connector/j/) 5.1.42
+        * [PostgreSQL JDBC Driver](https://jdbc.postgresql.org/) 42.1.4
+        * [MySQL Connector/J](http://dev.mysql.com/downloads/connector/j/) 5.1.44
         * [jTDS](https://sourceforge.net/projects/jtds/) 1.3.1
         * [H2DB](http://www.h2database.com) 1.4.196
         * [HSQLDB](http://hsqldb.org/) 2.4.0
