@@ -29,7 +29,7 @@ RUN echo "Download and install JDBC drivers..." \
 RUN echo "Download plugins..." \
 	&& wget -O btable.zip https://sourceforge.net/projects/btable/files/Version3.0-3.6/BTable-pentaho7-3.6-STABLE.zip/download \
 	&& wget -O saiku-chart-plus.zip http://sourceforge.net/projects/saikuchartplus/files/SaikuChartPlus3/saiku-chart-plus-vSaiku3-plugin-pentaho.zip/download \
-	&& wget --progress=dot:giga  http://meteorite.bi/downloads/saiku-plugin-p7-3.15.zip \
+	&& wget --progress=dot:giga  http://meteorite.bi/downloads/saiku-plugin-p7.1-3.15.zip \
 			https://github.com/zhicwu/cte/releases/download/7.1-SNAPSHOT/cte-7.1-SNAPSHOT.zip \
 			http://ctools.pentaho.com/files/d3ComponentLibrary/17.07.24/d3ComponentLibrary-17.07.24.zip \
 			https://github.com/rpbouman/pash/raw/master/bin/pash.zip \
