@@ -9,7 +9,7 @@ FROM zhicwu/biserver-ce:7.1-full
 MAINTAINER Zhichun Wu <zhicwu@gmail.com>
 
 # Set environment variables
-ENV BISERVER_USER=pentaho PDI_PATCH=7.1.0.0 JMX_EXPORTER_VERSION=0.9
+ENV BISERVER_USER=pentaho PDI_PATCH=7.1.0.5 JMX_EXPORTER_VERSION=0.10
 
 # Update server configuration
 RUN echo "Update server configuration..." \
@@ -20,7 +20,7 @@ RUN echo "Update server configuration..." \
 			-e 's|\(<value>.xcdf</value>\)|\1<value>.saiku</value>|' \
 			-e 's|\(<value>xcdf</value>\)|\1<value>saiku</value>|' pentaho-solutions/system/importExport.xml \
 		&& touch pentaho-solutions/system/saiku/ui/js/saiku/plugins/CCC_Chart/cdo.js \
-		&& wget -P pentaho-solutions/system/saiku/components/saikuWidget https://raw.githubusercontent.com/OSBI/saiku/tag-3.14/saiku-bi-platform-plugin-p7/src/main/plugin/components/saikuWidget/SaikuWidgetComponent.js \
+		&& wget -P pentaho-solutions/system/saiku/components/saikuWidget https://github.com/OSBI/saiku/raw/tag-3.15/saiku-bi-platform-plugin-p7.1/src/main/plugin/components/saikuWidget/SaikuWidgetComponent.js \
 		&& sed -i -e "s|\(: data.query.queryModel.axes.FILTER\)\(.*\)|\1 == undefined ? [] \1\2|" \
 			-e "s|\(: data.query.queryModel.axes.COLUMNS\)\(.*\)|\1 == undefined ? [] \1\2|" \
 			-e "s|\(: data.query.queryModel.axes.ROWS\)\(.*\)|\1 == undefined ? [] \1\2|" \
@@ -78,38 +78,36 @@ RUN echo "Download patches and dependencies..." \
 		&& wget -O tomcat/bin/jmx-exporter.jar http://central.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/${JMX_EXPORTER_VERSION}/jmx_prometheus_javaagent-${JMX_EXPORTER_VERSION}.jar \
 		&& wget --progress=dot:giga https://github.com/zhicwu/pdi-cluster/releases/download/${PDI_PATCH}/pentaho-kettle-${PDI_PATCH}.jar \
 			https://github.com/zhicwu/pdi-cluster/releases/download/${PDI_PATCH}/pentaho-platform-${PDI_PATCH}.jar \
-			https://github.com/zhicwu/saiku/releases/download/3.14.1/saiku-3.14-patch.zip \
 		&& chmod +x /usr/local/bin/*.sh \
 	&& echo "Applying patches..." \
-		&& rm -f pentaho-solutions/system/saiku/lib/batik-*-1.7.jar \
-			pentaho-solutions/system/saiku/lib/cpf-*-353.jar \
-		&& unzip -o saiku*.zip -d pentaho-solutions/system/saiku/lib \
+		&& rm -f pentaho-solutions/system/saiku/lib/cpf-*.jar \
+		&& cp pentaho-solutions/system/sparkl/lib/cpf-*.jar pentaho-solutions/system/saiku/lib/. \
 		&& mkdir -p patches \
 		&& unzip -q pentaho-kettle*.jar -d patches \
 		&& unzip -oq pentaho-platform*.jar -d patches \
 		&& cd patches \
-		&& $JAVA_HOME/bin/jar uf ../pentaho-solutions/system/pentaho-pdi-platform-plugin/lib/DIS-${BISERVER_BUILD}.jar org/pentaho/platform/plugin/kettle \
+		&& $JAVA_HOME/bin/jar uf ../pentaho-solutions/system/pentaho-pdi-platform-plugin/lib/DIS-${BISERVER_VERSION}.jar org/pentaho/platform/plugin/kettle \
 		&& rm -rf org/pentaho/platform/plugin/kettle \
-		&& $JAVA_HOME/bin/jar uf ../tomcat/webapps/pentaho/WEB-INF/lib/pdi-pur-plugin-${BISERVER_BUILD}.jar org/pentaho/di/repository/pur/LazyUnifiedRepositoryDirectory.class \
-		&& $JAVA_HOME/bin/jar uf ../pentaho-solutions/system/kettle/plugins/pdi-pur-plugin/lib/pdi-pur-plugin-${BISERVER_BUILD}.jar org/pentaho/di/repository/pur/LazyUnifiedRepositoryDirectory.class \
-		&& $JAVA_HOME/bin/jar uf ../pentaho-solutions/system/kettle/plugins/pdi-pur-plugin/pdi-pur-plugin-${BISERVER_BUILD}.jar org/pentaho/di/repository/pur/LazyUnifiedRepositoryDirectory.class \
-		&& $JAVA_HOME/bin/jar uf ../pentaho-solutions/system/pdi-pur-plugin/lib/pdi-pur-plugin-${BISERVER_BUILD}.jar org/pentaho/di/repository/pur/LazyUnifiedRepositoryDirectory.class \
-		&& $JAVA_HOME/bin/jar uf ../pentaho-solutions/system/pdi-pur-plugin/pdi-pur-plugin-${BISERVER_BUILD}.jar org/pentaho/di/repository/pur/LazyUnifiedRepositoryDirectory.class \
+		&& $JAVA_HOME/bin/jar uf ../tomcat/webapps/pentaho/WEB-INF/lib/pdi-pur-plugin-${BISERVER_VERSION}.jar org/pentaho/di/repository/pur/LazyUnifiedRepositoryDirectory.class \
+		&& $JAVA_HOME/bin/jar uf ../pentaho-solutions/system/kettle/plugins/pdi-pur-plugin/lib/pdi-pur-plugin-${BISERVER_VERSION}.jar org/pentaho/di/repository/pur/LazyUnifiedRepositoryDirectory.class \
+		&& $JAVA_HOME/bin/jar uf ../pentaho-solutions/system/kettle/plugins/pdi-pur-plugin/pdi-pur-plugin-${BISERVER_VERSION}.jar org/pentaho/di/repository/pur/LazyUnifiedRepositoryDirectory.class \
+		&& $JAVA_HOME/bin/jar uf ../pentaho-solutions/system/pdi-pur-plugin/lib/pdi-pur-plugin-${BISERVER_VERSION}.jar org/pentaho/di/repository/pur/LazyUnifiedRepositoryDirectory.class \
+		&& $JAVA_HOME/bin/jar uf ../pentaho-solutions/system/pdi-pur-plugin/pdi-pur-plugin-${BISERVER_VERSION}.jar org/pentaho/di/repository/pur/LazyUnifiedRepositoryDirectory.class \
 		&& rm -rf org/pentaho/di/repository/pur \
-		&& $JAVA_HOME/bin/jar uf ../tomcat/webapps/pentaho/WEB-INF/lib/kettle-engine-${BISERVER_BUILD}.jar org/pentaho/di/repository \
+		&& $JAVA_HOME/bin/jar uf ../tomcat/webapps/pentaho/WEB-INF/lib/kettle-engine-${BISERVER_VERSION}.jar org/pentaho/di/repository \
 		&& rm -rf org/pentaho/di/repository \
-		&& $JAVA_HOME/bin/jar uf ../tomcat/webapps/pentaho/WEB-INF/lib/kettle-core-${BISERVER_BUILD}.jar org/pentaho/di/core/database \
-		&& $JAVA_HOME/bin/jar uf ../tomcat/webapps/pentaho/WEB-INF/lib/kettle-core-${BISERVER_BUILD}.jar org/pentaho/di/core/row \
-		&& $JAVA_HOME/bin/jar uf ../tomcat/webapps/pentaho/WEB-INF/lib/kettle-core-${BISERVER_BUILD}.jar org/pentaho/di/cluster/SlaveConnectionManager*.class \
+		&& $JAVA_HOME/bin/jar uf ../tomcat/webapps/pentaho/WEB-INF/lib/kettle-core-${BISERVER_VERSION}.jar org/pentaho/di/core/database \
+		&& $JAVA_HOME/bin/jar uf ../tomcat/webapps/pentaho/WEB-INF/lib/kettle-core-${BISERVER_VERSION}.jar org/pentaho/di/core/row \
+		&& $JAVA_HOME/bin/jar uf ../tomcat/webapps/pentaho/WEB-INF/lib/kettle-core-${BISERVER_VERSION}.jar org/pentaho/di/cluster/SlaveConnectionManager*.class \
 		&& rm -rf org/pentaho/di/core/database org/pentaho/di/core/row org/pentaho/di/cluster/SlaveConnectionManager*.class \
-		&& $JAVA_HOME/bin/jar uf ../tomcat/webapps/pentaho/WEB-INF/lib/kettle-engine-${BISERVER_BUILD}.jar kettle-servlets.xml \
-		&& $JAVA_HOME/bin/jar uf ../tomcat/webapps/pentaho/WEB-INF/lib/kettle-engine-${BISERVER_BUILD}.jar org/pentaho/di \
+		&& $JAVA_HOME/bin/jar uf ../tomcat/webapps/pentaho/WEB-INF/lib/kettle-engine-${BISERVER_VERSION}.jar kettle-servlets.xml \
+		&& $JAVA_HOME/bin/jar uf ../tomcat/webapps/pentaho/WEB-INF/lib/kettle-engine-${BISERVER_VERSION}.jar org/pentaho/di \
 		&& rm -rf org/pentaho/di \
-		&& $JAVA_HOME/bin/jar uf ../tomcat/webapps/pentaho/WEB-INF/lib/pentaho-platform-scheduler-${BISERVER_BUILD}.jar org/pentaho/platform/scheduler2/quartz \
-		&& $JAVA_HOME/bin/jar uf ../tomcat/webapps/pentaho/WEB-INF/lib/classic-core-platform-plugin-${BISERVER_BUILD}.jar org/pentaho/reporting/platform/plugin/connection \
-		&& $JAVA_HOME/bin/jar uf ../tomcat/webapps/pentaho/WEB-INF/lib/pentaho-platform-core-${BISERVER_BUILD}.jar org/pentaho/platform/engine/services \
+		&& $JAVA_HOME/bin/jar uf ../tomcat/webapps/pentaho/WEB-INF/lib/pentaho-platform-scheduler-${BISERVER_VERSION}.jar org/pentaho/platform/scheduler2/quartz \
+		&& $JAVA_HOME/bin/jar uf ../tomcat/webapps/pentaho/WEB-INF/lib/classic-core-platform-plugin-${BISERVER_VERSION}.jar org/pentaho/reporting/platform/plugin/connection \
+		&& $JAVA_HOME/bin/jar uf ../tomcat/webapps/pentaho/WEB-INF/lib/pentaho-platform-core-${BISERVER_VERSION}.jar org/pentaho/platform/engine/services \
 		&& cd - \
-		&& rm -rf patches *.jar *.zip
+		&& rm -rf patches *.jar
 
 # Add entry point, tempaltes and cron jobs
 COPY docker-entrypoint.sh $BISERVER_HOME/docker-entrypoint.sh
