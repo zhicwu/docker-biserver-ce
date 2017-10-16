@@ -39,5 +39,5 @@ RUN echo "Download plugins..." \
 		&& for i in *.zip; do echo "Unpacking $i..." && unzip -q -d pentaho-solutions/system $i && rm -f $i; done
 
 # Health check
-HEALTHCHECK --interval=5m --timeout=3s --start-period=1m --retries=3 \
+HEALTHCHECK --interval=30s --timeout=3s --start-period=2m --retries=3 \
 	CMD curl -qsf http://localhost:8080/pentaho/js/themes.js | grep active_theme || exit 1
