@@ -80,6 +80,8 @@ RUN echo "Download patches and dependencies..." \
 			https://github.com/zhicwu/pdi-cluster/releases/download/${PDI_PATCH}/pentaho-platform-${PDI_PATCH}.jar \
 		&& chmod +x /usr/local/bin/*.sh \
 	&& echo "Applying patches..." \
+		&& find pentaho-solutions/system/{d3ComponentLibrary,BTable,saiku} -name component.xml | xargs sed -i -e 's|<Implementation>|<Implementation supportsLegacy="true" supportsAMD="true">|' \
+		&& sed -i -e 's|\(<Dependencies>\)|\1\n\t\t<Dependency src="../../ui/js/saiku/Settings.js">saikusettings</Dependency>|' pentaho-solutions/system/saiku/components/saikuWidget/component.xml \
 		&& rm -f pentaho-solutions/system/saiku/lib/cpf-*.jar \
 		&& cp pentaho-solutions/system/sparkl/lib/cpf-*.jar pentaho-solutions/system/saiku/lib/. \
 		&& mkdir -p patches \
