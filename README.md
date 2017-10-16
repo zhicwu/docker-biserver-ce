@@ -28,6 +28,7 @@ ubuntu:16.04
         * [H2DB](http://www.h2database.com) 1.4.196
         * [HSQLDB](http://hsqldb.org/) 2.4.0
         * [Cassandra JDBC Driver](https://github.com/zhicwu/cassandra-jdbc-driver) 0.6.4
+        * [SQLite JDBC Driver](https://github.com/xerial/sqlite-jdbc) 3.20.1
     * [Saiku](http://community.meteorite.bi/) - enabled SaikuWidgetComponent in CDE
     * [XMLA Provider](https://sourceforge.net/projects/xmlaconnect/) 1.0.0.103 - download from Help -> Document popup and install on your windows box
 
