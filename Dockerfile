@@ -78,6 +78,7 @@ RUN echo "Download patches and dependencies..." \
 		&& wget -O tomcat/bin/jmx-exporter.jar http://central.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/${JMX_EXPORTER_VERSION}/jmx_prometheus_javaagent-${JMX_EXPORTER_VERSION}.jar \
 		&& wget --progress=dot:giga https://github.com/zhicwu/pdi-cluster/releases/download/${PDI_PATCH}/pentaho-kettle-${PDI_PATCH}.jar \
 			https://github.com/zhicwu/pdi-cluster/releases/download/${PDI_PATCH}/pentaho-platform-${PDI_PATCH}.jar \
+		&& wget -P pentaho-solutions/system/saiku/lib/ http://central.maven.org/maven2/com/fasterxml/jackson/module/jackson-module-jaxb-annotations/2.5.1/jackson-module-jaxb-annotations-2.5.1.jar \
 		&& chmod +x /usr/local/bin/*.sh \
 	&& echo "Applying patches..." \
 		&& find pentaho-solutions/system/d3ComponentLibrary pentaho-solutions/system/BTable pentaho-solutions/system/saiku \
