@@ -5,6 +5,8 @@ set -e
 
 : ${BI_JAVA_OPTS:='-javaagent:./jmx-exporter.jar=1234:/dev/null -Djava.security.egd=file:/dev/./urandom -Xms4096m -Xmx4096m -XX:MaxMetaspaceSize=256m -XX:+PreserveFramePointer -Djava.awt.headless=true -Dpentaho.karaf.root.transient=true -XX:+HeapDumpOnOutOfMemoryError -XX:ErrorFile=../logs/jvm_error.log -XX:HeapDumpPath=../logs/ -verbose:gc -Xloggc:../logs/gc.log -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintHeapAtGC -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=2 -XX:GCLogFileSize=64M -XX:OnOutOfMemoryError=/usr/bin/oom_killer -Dsun.rmi.dgc.client.gcInterval=3600000 -Dsun.rmi.dgc.server.gcInterval=3600000 -Dfile.encoding=utf8 -DDI_HOME=\"$DI_HOME\"'}
 
+: ${JCR_GC_FREQ:=''} # either 'weekly' or 'monthly', by default it's 'now'
+
 : ${PDI_HADOOP_CONFIG:="hdp25"}
 
 : ${PDI_MAX_LOG_LINES:="10000"}
@@ -231,6 +233,11 @@ apply_changes() {
 		if [ ! -f data/hsqldb/hibernate.properties ]; then
 			mkdir -p data/hsqldb && /bin/cp -rf data/.hsqldb/* data/hsqldb/.
 		fi
+	fi
+
+	# update JCR repository GC freqency
+	if [ "$JCR_GC_FREQ" != "" ] && [ -f pentaho-solutions/system/systemListeners.xml ]; then
+		sed -i -e 's| value="\w*"/><!-- jcr-gc-freq -->| value="'"$JCR_GC_FREQ"'"/><!-- jcr-gc-freq -->|' pentaho-solutions/system/systemListeners.xml
 	fi
 }
 

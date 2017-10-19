@@ -19,6 +19,8 @@ RUN echo "Update server configuration..." \
 		&& sed -i -e 's|\(<entry key="jpeg" value-ref="streamConverter"/>\)|\1<entry key="saiku" value-ref="streamConverter"/>|' \
 			-e 's|\(<value>.xcdf</value>\)|\1<value>.saiku</value>|' \
 			-e 's|\(<value>xcdf</value>\)|\1<value>saiku</value>|' pentaho-solutions/system/importExport.xml \
+		&& sed -i -e 's|\(<!-- Insert system-listeners -->\)|\1\n        <bean id="repositoryCleanerSystemListener" class="org.pentaho.platform.plugin.services.repository.RepositoryCleanerSystemListener">\n          <property name="gcEnabled" value="true"/>\n          <property name="execute" value="now"/><!-- jcr-gc-freq -->\n        </bean>|' \
+			pentaho-solutions/system/systemListeners.xml \
 		&& touch pentaho-solutions/system/saiku/ui/js/saiku/plugins/CCC_Chart/cdo.js \
 		&& wget -P pentaho-solutions/system/saiku/components/saikuWidget https://github.com/OSBI/saiku/raw/tag-3.15/saiku-bi-platform-plugin-p7.1/src/main/plugin/components/saikuWidget/SaikuWidgetComponent.js \
 		&& sed -i -e "s|\(: data.query.queryModel.axes.FILTER\)\(.*\)|\1 == undefined ? [] \1\2|" \
