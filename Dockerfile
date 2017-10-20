@@ -7,7 +7,7 @@
 #
 FROM maven:3.5.0-jdk-8 as builder
 
-ENV BISERVER_RELEASE=7.1.0.5 BISERVER_HOME=/pentaho-server
+ENV BISERVER_RELEASE=8.0.0.0 BISERVER_HOME=/pentaho-server
 
 RUN apt-get update \
 	&& apt-get install -y libapr1 libaprutil1 libapr1-dev libssl-dev gcc make \
@@ -16,8 +16,7 @@ RUN apt-get update \
 	&& wget --progress=dot:giga https://github.com/pentaho/pentaho-platform/archive/$BISERVER_RELEASE-R.tar.gz \
 	&& tar zxf $BISERVER_RELEASE-R.tar.gz \
 	&& cd pentaho-platform-$BISERVER_RELEASE-R \
-	&& sed -i -e 's|<tomcat.version>.*</tomcat.version>|<tomcat.version>8.0.47</tomcat.version>|' \
-		-e 's|<artifactId>tomcat-windows-x64</artifactId>|<artifactId>tomcat</artifactId>|' assemblies/pentaho-server/pom.xml \
+	&& sed -i -e 's|<artifactId>tomcat-windows-x64</artifactId>|<artifactId>tomcat</artifactId>|' assemblies/pentaho-server/pom.xml \
 	&& mvn -DskipTests install \
 	&& cd - \
 	&& unzip pentaho-platform-$BISERVER_RELEASE-R/assemblies/pentaho-server/target/pentaho-server-ce-$BISERVER_RELEASE*.zip \
@@ -54,7 +53,7 @@ FROM zhicwu/java:8
 MAINTAINER Zhichun Wu <zhicwu@gmail.com>
 
 # Set environment variables
-ENV BISERVER_VERSION=7.1.0.5-67 \
+ENV BISERVER_VERSION=8.0.0.0-1 \
 	BISERVER_HOME=/biserver-ce KETTLE_HOME=/biserver-ce/pentaho-solutions/system/kettle
 
 # Set label
@@ -62,7 +61,7 @@ LABEL java_server="Pentaho Server $BISERVER_VERSION Community Edition"
 
 # Update system and install dependencies
 RUN apt-get update \
-	&& apt-get install -y libapr1 libaprutil1 libssl1.0.0 \
+	&& apt-get install -y libapr1 libaprutil1 libssl1.0.0 xvfb \
 	&& mkdir -p $BISERVER_HOME \
 	&& ln -s $BISERVER_HOME /pentaho-server \
 	&& apt-get clean \
