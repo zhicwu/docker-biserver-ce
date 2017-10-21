@@ -138,6 +138,6 @@ ENTRYPOINT ["/sbin/my_init", "--", "./docker-entrypoint.sh"]
 #  8009 - AJP
 # 11098 - JMX RMI Registry
 # 44444 - RMI Server
-#EXPOSE 1234 8080 8009 11098 44444
+EXPOSE 1234 8080
 
-#CMD ["biserver"]
+CMD ["biserver"]
