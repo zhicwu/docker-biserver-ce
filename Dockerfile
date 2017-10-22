@@ -62,7 +62,7 @@ LABEL java_server="Pentaho Server $BISERVER_VERSION Community Edition"
 
 # Update system and install dependencies
 RUN apt-get update \
-	&& apt-get install -y libapr1 libaprutil1 libssl1.0.0 \
+	&& apt-get install -y libapr1 libaprutil1 libssl1.0.0 xvfb \
 	&& mkdir -p $BISERVER_HOME \
 	&& ln -s $BISERVER_HOME /pentaho-server \
 	&& apt-get clean \
