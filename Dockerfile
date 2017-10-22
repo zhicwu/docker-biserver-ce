@@ -18,7 +18,7 @@ RUN apt-get update \
 		 https://github.com/maven-eclipse/maven-eclipse.github.io/raw/master/maven/org/eclipse/swt/org.eclipse.swt.gtk.linux.x86_64/$ECLIPSE_SWT_VERSION/org.eclipse.swt.gtk.linux.x86_64-$ECLIPSE_SWT_VERSION.jar \
 		 http://clojars.org/repo/org/syslog4j/syslog4j/$SYSLOG4J_VERSION/syslog4j-$SYSLOG4J_VERSION.jar \
 	&& mvn install:install-file -Dfile=org.eclipse.swt.gtk.linux.x86_64-$ECLIPSE_SWT_VERSION.jar -DgroupId=org.eclipse.swt -DartifactId=org.eclipse.swt.gtk.linux.x86_64 -Dversion=$ECLIPSE_SWT_VERSION -Dpackaging=jar \
-	&& mvn install:install-file -Dfile=syslog4j-$SYSLOG4J_VERSION.jar -DgroupId=org.syslog4j -DartifactId=syslog4j -Dversion=#SYSLOG4J_VERSION -Dpackaging=jar \
+	&& mvn install:install-file -Dfile=syslog4j-$SYSLOG4J_VERSION.jar -DgroupId=org.syslog4j -DartifactId=syslog4j -Dversion=$SYSLOG4J_VERSION -Dpackaging=jar \
 	&& tar zxf $BISERVER_RELEASE-R.tar.gz \
 	&& cd pentaho-platform-$BISERVER_RELEASE-R \
 	&& sed -i -e 's|<tomcat.version>.*</tomcat.version>|<tomcat.version>8.0.47</tomcat.version>|' \
