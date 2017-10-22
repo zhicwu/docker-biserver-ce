@@ -14,7 +14,7 @@ ubuntu:16.04
 * Official Ubuntu 16.04 LTS docker image
 * [Phusion Base Image](https://github.com/phusion/baseimage-docker) 0.9.22
 * Oracle JDK 8u144
-* [Pentaho BI Server Community Edition](http://community.pentaho.com/) 7.1.0.5-67
+* [Pentaho BI Server Community Edition](http://community.pentaho.com/) 7.1.0.5-70
 * Apache Tomcat 8.0.47 with APR
 
 ## Quick Start

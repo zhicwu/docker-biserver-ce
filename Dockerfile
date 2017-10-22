@@ -27,6 +27,7 @@ RUN apt-get update \
 	&& sed -i -e 's|\(/packaging>\)|\1\n  <classifier>client</classifier>|' /root/.m2/repository/pentaho/pentaho-karaf-assembly/$BISERVER_VERSION/pentaho-karaf-assembly-$BISERVER_VERSION.pom \
 	&& tar zxf $BISERVER_RELEASE-R.tar.gz \
 	&& cd pentaho-platform-$BISERVER_RELEASE-R \
+	&& sed -i -e 's|\(^  <properties>\)|\1\n    <maven.compiler.source>1.8</maven.compiler.source>\n    <maven.compiler.target>1.8</maven.compiler.target>|' pom.xml \
 	&& sed -i -e 's|<tomcat.version>.*</tomcat.version>|<tomcat.version>8.0.47</tomcat.version>|' \
 		-e 's|<artifactId>tomcat-windows-x64</artifactId>|<artifactId>tomcat</artifactId>|' assemblies/pentaho-server/pom.xml \
 	&& mvn -DskipTests install \
