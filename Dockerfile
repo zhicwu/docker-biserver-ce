@@ -7,13 +7,18 @@
 #
 FROM maven:3.5.0-jdk-8 as builder
 
-ENV BISERVER_RELEASE=7.1.0.5 BISERVER_HOME=/pentaho-server
+ENV BISERVER_RELEASE=7.1.0.5 BISERVER_HOME=/pentaho-server \
+	ECLIPSE_SWT_VERSION=4.6 SYSLOG4J_VERSION=0.9.46
 
 RUN apt-get update \
 	&& apt-get install -y libapr1 libaprutil1 libapr1-dev libssl-dev gcc make \
 	&& mkdir -p ~/.m2 \
 	&& wget --progress=dot:giga -P /root/.m2/ https://raw.githubusercontent.com/pentaho/maven-parent-poms/master/maven-support-files/settings.xml \
 	&& wget --progress=dot:giga https://github.com/pentaho/pentaho-platform/archive/$BISERVER_RELEASE-R.tar.gz \
+		 wget https://github.com/maven-eclipse/maven-eclipse.github.io/raw/master/maven/org/eclipse/swt/org.eclipse.swt.gtk.linux.x86_64/$ECLIPSE_SWT_VERSION/org.eclipse.swt.gtk.linux.x86_64-$ECLIPSE_SWT_VERSION.jar \
+		 http://clojars.org/repo/org/syslog4j/syslog4j/$SYSLOG4J_VERSION/syslog4j-$SYSLOG4J_VERSION.jar \
+	&& mvn install:install-file -Dfile=org.eclipse.swt.gtk.linux.x86_64-$ECLIPSE_SWT_VERSION.jar -DgroupId=org.eclipse.swt -DartifactId=org.eclipse.swt.gtk.linux.x86_64 -Dversion=$ECLIPSE_SWT_VERSION -Dpackaging=jar \
+	&& mvn install:install-file -Dfile=syslog4j-$SYSLOG4J_VERSION.jar -DgroupId=org.syslog4j -DartifactId=syslog4j -Dversion=#SYSLOG4J_VERSION -Dpackaging=jar \
 	&& tar zxf $BISERVER_RELEASE-R.tar.gz \
 	&& cd pentaho-platform-$BISERVER_RELEASE-R \
 	&& sed -i -e 's|<tomcat.version>.*</tomcat.version>|<tomcat.version>8.0.47</tomcat.version>|' \
@@ -54,7 +59,7 @@ FROM zhicwu/java:8
 MAINTAINER Zhichun Wu <zhicwu@gmail.com>
 
 # Set environment variables
-ENV BISERVER_VERSION=7.1.0.5-67 \
+ENV BISERVER_VERSION=7.1.0.5-70 \
 	BISERVER_HOME=/biserver-ce KETTLE_HOME=/biserver-ce/pentaho-solutions/system/kettle
 
 # Set label
