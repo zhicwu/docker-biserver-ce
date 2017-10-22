@@ -31,6 +31,7 @@ RUN apt-get update \
 	&& mvn --quiet -DskipTests install \
 	&& cd - \
 	&& unzip pentaho-platform-$BISERVER_RELEASE-R/assemblies/pentaho-server/target/pentaho-server-ce-$BISERVER_RELEASE*.zip \
+	&& rm -rf pentaho-platform-$BISERVER_RELEASE-R \
 	&& find $BISERVER_HOME -name "*.bat" -delete \
 	&& find $BISERVER_HOME -name "*.exe" -delete \
 	&& rm -f $BISERVER_HOME/promptuser.* \
