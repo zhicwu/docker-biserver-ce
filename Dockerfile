@@ -10,7 +10,7 @@ MAINTAINER Zhichun Wu <zhicwu@gmail.com>
 
 # Set environment variables
 ENV POSTGRESQL_DRIVER_VERSION=42.1.4 MYSQL_DRIVER_VERSION=5.1.44 \
-	JTDS_VERSION=1.3.1 CASSANDRA_DRIVER_VERSION=0.6.4 SQLITE_DRIVER_VERSION=3.20.1 \
+	JTDS_VERSION=1.3.1 CASSANDRA_DRIVER_VERSION=0.6.4 \
 	H2DB_VERSION=1.4.196 HSQLDB_VERSION=2.4.0 XMLA_PROVIDER_VERSION=1.0.0.103
 
 # Add latest JDBC drivers and XMLA connector
@@ -21,7 +21,6 @@ RUN echo "Download and install JDBC drivers..." \
 			http://central.maven.org/maven2/com/github/zhicwu/cassandra-jdbc-driver/${CASSANDRA_DRIVER_VERSION}/cassandra-jdbc-driver-${CASSANDRA_DRIVER_VERSION}-shaded.jar \
 			http://central.maven.org/maven2/com/h2database/h2/${H2DB_VERSION}/h2-${H2DB_VERSION}.jar \
 			http://central.maven.org/maven2/org/hsqldb/hsqldb/${HSQLDB_VERSION}/hsqldb-${HSQLDB_VERSION}.jar \
-			http://central.maven.org/maven2/org/xerial/sqlite-jdbc/${SQLITE_DRIVER_VERSION}/sqlite-jdbc-${SQLITE_DRIVER_VERSION}.jar \
 	&& wget --progress=dot:giga -O tomcat/webapps/pentaho/docs/xmla-connector.exe https://sourceforge.net/projects/xmlaconnect/files/XMLA_Provider_v${XMLA_PROVIDER_VERSION}.exe/download \
 	&& rm -f tomcat/lib/postgre*.jar tomcat/lib/mysql*.jar tomcat/lib/jtds*.jar tomcat/lib/h2*.jar tomcat/lib/hsqldb*.jar \
 	&& mv *.jar tomcat/lib/.
