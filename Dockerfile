@@ -3,7 +3,7 @@
 #
 
 # Pull base image
-FROM zhicwu/biserver-ce:7.1-base
+FROM zhicwu/biserver-ce:8.0-base
 
 # Set maintainer
 MAINTAINER Zhichun Wu <zhicwu@gmail.com>
