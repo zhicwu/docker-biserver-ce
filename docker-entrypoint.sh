@@ -7,7 +7,7 @@ set -e
 
 : ${JCR_GC_FREQ:='now'} # either 'weekly' or 'monthly', by default it's 'now'
 
-: ${PDI_HADOOP_CONFIG:="hdp25"}
+: ${PDI_HADOOP_CONFIG:="hdp26"}
 
 : ${PDI_MAX_LOG_LINES:="10000"}
 : ${PDI_MAX_LOG_TIMEOUT:="1440"}

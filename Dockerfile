@@ -3,13 +3,13 @@
 #
 
 # Pull base image
-FROM zhicwu/biserver-ce:7.1-full
+FROM zhicwu/biserver-ce:8.0-full
 
 # Set maintainer
 MAINTAINER Zhichun Wu <zhicwu@gmail.com>
 
 # Set environment variables
-ENV BISERVER_USER=pentaho PDI_PATCH=7.1.0.5 JMX_EXPORTER_VERSION=0.10
+ENV BISERVER_USER=pentaho PDI_PATCH=8.0.0.0 JMX_EXPORTER_VERSION=0.10
 
 # Update server configuration
 RUN echo "Update server configuration..." \
@@ -52,7 +52,7 @@ RUN echo "Update server configuration..." \
 			-e 's|\(<login-show-sample-users-hint>\).*\(</login-show-sample-users-hint>\)|\1false\2|' \
 			-e 's|\(<filebased-solution-cache>\).*\(</filebased-solution-cache>\)| -->\1true\2<!-- |' pentaho-solutions/system/pentaho.xml \
 		&& sed -i -e '/^#/! s/\(.*\)/#\1/g' pentaho-solutions/system/simple-jndi/jdbc.properties \
-		&& sed -i -e 's|\(\A/logout.*\Z=Anonymous\)|\1\n\\A/kettle/add.*\\Z=Admin\n\\A/kettle/allocate.*\\Z=Admin\n\\A/kettle/cleanup.*\\Z=Admin\n\\A/kettle/execute.*\\Z=Admin\n\\A/kettle/getslave.*\\Z=Admin\n\\A/kettle/next.*\\Z=Admin\n\\A/kettle/pause.*\\Z=Admin\n\\A/kettle/prepare.*\\Z=Admin\n\\A/kettle/register.*\\Z=Admin\n\\A/kettle/remove.*\\Z=Admin\n\\A/kettle/run.*\\Z=Admin\n\\A/kettle/start.*\\Z=Admin\n\\A/kettle/stop.*\\Z=Admin\n\\A/plugin/cda/api/clearCache.*\\Z=Authenticated\n\\A/plugin/saiku/api/admin/discover/refresh.*\\Z=Authenticated|' pentaho-solutions/system/applicationContext-spring-security.xml \
+		&& sed -i -e 's|\(<sec:intercept-url pattern="\\A/logout.*\\Z" access="Anonymous" />\)|\1\n<sec:intercept-url pattern="\\A/kettle/add.*\\Z" access="Admin" />\n<sec:intercept-url pattern="\\A/kettle/allocate.*\\Z" access="Admin" />\n<sec:intercept-url pattern="\\A/kettle/cleanup.*\\Z" access="Admin" />\n<sec:intercept-url pattern="\\A/kettle/execute.*\\Z" access="Admin" />\n<sec:intercept-url pattern="\\A/kettle/getslave.*\\Z" access="Admin" />\n<sec:intercept-url pattern="\\A/kettle/next.*\\Z" access="Admin" />\n<sec:intercept-url pattern="\\A/kettle/pause.*\\Z" access="Admin" />\n<sec:intercept-url pattern="\\A/kettle/prepare.*\\Z" access="Admin" />\n<sec:intercept-url pattern="\\A/kettle/register.*\\Z" access="Admin" />\n<sec:intercept-url pattern="\\A/kettle/remove.*\\Z" access="Admin" />\n<sec:intercept-url pattern="\\A/kettle/run.*\\Z" access="Admin" />\n<sec:intercept-url pattern="\\A/kettle/start.*\\Z" access="Admin" />\n<sec:intercept-url pattern="\\A/kettle/stop.*\\Z" access="Admin" />\n<sec:intercept-url pattern="\\A/plugin/cda/api/clearCache.*\\Z" access="Authenticated" />\n<sec:intercept-url pattern="\\A/plugin/saiku/api/admin/discover/refresh.*\\Z" access="Authenticated" />|' pentaho-solutions/system/applicationContext-spring-security.xml \
 		&& sed -i -e 's|\(<import resource="GettingStartedDB-spring.xml" />\).*|<!-- \1 -->|' pentaho-solutions/system/pentaho-spring-beans.xml \
 		&& sed -i -e "s|<script language='JavaScript' type='text/javascript' src='.*brightcove.com.*'></script>||" tomcat/webapps/pentaho/mantle/home/index.jsp \
 		&& sed -i -e "s|script.src = '.*brightcove.*';||" tomcat/webapps/pentaho/mantle/home/content/getting_started_launch.html \
