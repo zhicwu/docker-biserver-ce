@@ -87,8 +87,6 @@ RUN echo "Download patches and dependencies..." \
 			-name component.xml | xargs sed -i -e 's|<Implementation>|<Implementation supportsLegacy="true" supportsAMD="true">|' \
 		&& sed -i -e 's|\(<Dependencies>\)|\1\n\t\t<Dependency src="../../ui/js/saiku/Settings.js">saikusettings</Dependency>|' \
 			pentaho-solutions/system/saiku/components/saikuWidget/component.xml \
-		&& rm -f pentaho-solutions/system/saiku/lib/cpf-*.jar \
-		&& cp pentaho-solutions/system/sparkl/lib/cpf-*.jar pentaho-solutions/system/saiku/lib/. \
 		&& mkdir -p patches \
 		&& unzip -q pentaho-kettle*.jar -d patches \
 		&& unzip -oq pentaho-platform*.jar -d patches \
