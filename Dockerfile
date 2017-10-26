@@ -30,9 +30,10 @@ RUN echo "Download plugins..." \
 	&& wget -O btable.zip https://sourceforge.net/projects/btable/files/Version3.0-3.6/BTable-pentaho7-3.6-STABLE.zip/download \
 	&& wget -O saiku-chart-plus.zip http://sourceforge.net/projects/saikuchartplus/files/SaikuChartPlus3/saiku-chart-plus-vSaiku3-plugin-pentaho.zip/download \
 	&& wget --progress=dot:giga  http://meteorite.bi/downloads/saiku-plugin-p7.1-3.15.zip \
-			https://github.com/zhicwu/cte/releases/download/7.1-SNAPSHOT/cte-7.1-SNAPSHOT.zip \
+			https://github.com/zhicwu/cte/releases/download/8.0-SNAPSHOT/cte-8.0-SNAPSHOT.zip \
 			http://ctools.pentaho.com/files/d3ComponentLibrary/17.07.24/d3ComponentLibrary-17.07.24.zip \
 			https://github.com/rpbouman/pash/raw/master/bin/pash.zip \
+			https://github.com/rpbouman/phase/raw/master/dist/phase.zip \
 			http://ctools.pentaho.com/files/cdv/17.05.12/7.x/cdv-7.1-17.05.12.zip \
 	&& echo "Installing plugins..." \
 		&& for i in *.zip; do echo "Unpacking $i..." && unzip -q -d pentaho-solutions/system $i && rm -f $i; done
