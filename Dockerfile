@@ -93,11 +93,7 @@ RUN echo "Download patches and dependencies..." \
 		&& cd patches \
 		&& $JAVA_HOME/bin/jar uf ../pentaho-solutions/system/pentaho-pdi-platform-plugin/lib/DIS-${BISERVER_VERSION}.jar org/pentaho/platform/plugin/kettle \
 		&& rm -rf org/pentaho/platform/plugin/kettle \
-		&& $JAVA_HOME/bin/jar uf ../tomcat/webapps/pentaho/WEB-INF/lib/pdi-pur-plugin-${BISERVER_VERSION}.jar org/pentaho/di/repository/pur/LazyUnifiedRepositoryDirectory.class \
-		&& $JAVA_HOME/bin/jar uf ../pentaho-solutions/system/kettle/plugins/pdi-pur-plugin/lib/pdi-pur-plugin-${BISERVER_VERSION}.jar org/pentaho/di/repository/pur/LazyUnifiedRepositoryDirectory.class \
-		&& $JAVA_HOME/bin/jar uf ../pentaho-solutions/system/kettle/plugins/pdi-pur-plugin/pdi-pur-plugin-${BISERVER_VERSION}.jar org/pentaho/di/repository/pur/LazyUnifiedRepositoryDirectory.class \
-		&& $JAVA_HOME/bin/jar uf ../pentaho-solutions/system/pdi-pur-plugin/lib/pdi-pur-plugin-${BISERVER_VERSION}.jar org/pentaho/di/repository/pur/LazyUnifiedRepositoryDirectory.class \
-		&& $JAVA_HOME/bin/jar uf ../pentaho-solutions/system/pdi-pur-plugin/pdi-pur-plugin-${BISERVER_VERSION}.jar org/pentaho/di/repository/pur/LazyUnifiedRepositoryDirectory.class \
+		&& $JAVA_HOME/bin/jar uf ../pentaho-solutions/system/pdi-pur-plugin/pdi-pur-plugin-core-${BISERVER_VERSION}.jar org/pentaho/di/repository/pur/LazyUnifiedRepositoryDirectory.class \
 		&& rm -rf org/pentaho/di/repository/pur \
 		&& $JAVA_HOME/bin/jar uf ../tomcat/webapps/pentaho/WEB-INF/lib/kettle-engine-${BISERVER_VERSION}.jar org/pentaho/di/repository \
 		&& rm -rf org/pentaho/di/repository \
