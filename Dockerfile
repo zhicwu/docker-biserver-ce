@@ -33,6 +33,8 @@ RUN echo "Download plugins..." \
 			https://github.com/zhicwu/cte/releases/download/7.1-SNAPSHOT/cte-7.1-SNAPSHOT.zip \
 			http://ctools.pentaho.com/files/d3ComponentLibrary/17.07.24/d3ComponentLibrary-17.07.24.zip \
 			https://github.com/rpbouman/pash/raw/master/bin/pash.zip \
+			https://github.com/rpbouman/pedis/raw/master/dist/pedis.zip \
+			https://github.com/rpbouman/phase/raw/master/dist/phase.zip \
 			http://ctools.pentaho.com/files/cdv/17.05.12/7.x/cdv-7.1-17.05.12.zip \
 	&& echo "Installing plugins..." \
 		&& for i in *.zip; do echo "Unpacking $i..." && unzip -q -d pentaho-solutions/system $i && rm -f $i; done
