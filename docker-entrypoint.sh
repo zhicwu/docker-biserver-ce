@@ -62,54 +62,93 @@ update_db() {
 	: ${DATABASE_PORT:="3306"}
 	: ${DATABASE_USER:="$BISERVER_USER"}
 	: ${DATABASE_PASSWD:="$BISERVER_USER"}
-	: ${DATABASE_HIBERNATE:="pbi_hibernate"}
-	: ${DATABASE_HIBERNATE_URL:="jdbc:mysql://$DATABASE_HOST:DATABASE_PORT/$DATABASE_HIBERNATE"}
-	: ${DATABASE_QUARTZ:="pbi_quartz"}
-	: ${DATABASE_QUARTZ_URL:="jdbc:mysql://$DATABASE_HOST:DATABASE_PORT/$DATABASE_QUARTZ"}
-	: ${DATABASE_REPOSITORY:="pbi_jackrabbit"}
-	: ${DATABASE_REPOSITORY_URL:="jdbc:mysql://$DATABASE_HOST:DATABASE_PORT/$DATABASE_REPOSITORY"}
-	: ${DATABASE_VALIDATION_QUERY:="SELECT 1"}
 	: ${DATABASE_TYPE:="mysql"}
+	: ${DATABASE_VALIDATION_QUERY:="SELECT 1"}
+	: ${DATABASE_MAX_ACTIVE:="20"}
+	: ${DATABASE_MAX_IDLE:="5"}
+	: ${DATABASE_MAX_WAIT:="10000"}
+
+	: ${DATABASE_HIBERNATE:="hibernate"}
+	: ${DATABASE_HIBERNATE_DIALECT:="$DATABASE_DIALECT"}
+	: ${DATABASE_HIBERNATE_DRIVER:="$DATABASE_DRIVER"}
+	: ${DATABASE_HIBERNATE_HOST:="$DATABASE_HOST"}
+	: ${DATABASE_HIBERNATE_PORT:="$DATABASE_PORT"}
+	: ${DATABASE_HIBERNATE_USER:="$DATABASE_USER"}
+	: ${DATABASE_HIBERNATE_PASSWD:="$DATABASE_PASSWD"}
+	: ${DATABASE_HIBERNATE_URL:="jdbc:mysql://$DATABASE_HIBERNATE_HOST:$DATABASE_HIBERNATE_PORT/$DATABASE_HIBERNATE"}
+	: ${DATABASE_HIBERNATE_VALIDATION_QUERY:="$DATABASE_VALIDATION_QUERY"}
+	: ${DATABASE_HIBERNATE_MAX_ACTIVE:="$DATABASE_MAX_ACTIVE"}
+	: ${DATABASE_HIBERNATE_MAX_IDLE:="$DATABASE_MAX_IDLE"}
+	: ${DATABASE_HIBERNATE_MAX_WAIT:="$DATABASE_MAX_WAIT"}
+
+	: ${DATABASE_QUARTZ:="quartz"}
+	: ${DATABASE_QUARTZ_DRIVER:="$DATABASE_DRIVER"}
+	: ${DATABASE_QUARTZ_HOST:="$DATABASE_HOST"}
+	: ${DATABASE_QUARTZ_PORT:="$DATABASE_PORT"}
+	: ${DATABASE_QUARTZ_USER:="$DATABASE_USER"}
+	: ${DATABASE_QUARTZ_PASSWD:="$DATABASE_PASSWD"}
+	: ${DATABASE_QUARTZ_TYPE:="$DATABASE_TYPE"}
+	: ${DATABASE_QUARTZ_URL:="jdbc:mysql://$DATABASE_QUARTZ_HOST:$DATABASE_QUARTZ_PORT/$DATABASE_QUARTZ"}
+	: ${DATABASE_QUARTZ_VALIDATION_QUERY:="$DATABASE_VALIDATION_QUERY"}
+	: ${DATABASE_QUARTZ_MAX_ACTIVE:="$DATABASE_MAX_ACTIVE"}
+	: ${DATABASE_QUARTZ_MAX_IDLE:="$DATABASE_MAX_IDLE"}
+	: ${DATABASE_QUARTZ_MAX_WAIT:="$DATABASE_MAX_WAIT"}
+
+	: ${DATABASE_REPOSITORY:="jackrabbit"}
+	: ${DATABASE_REPOSITORY_DRIVER:="$DATABASE_DRIVER"}
+	: ${DATABASE_REPOSITORY_HOST:="$DATABASE_HOST"}
+	: ${DATABASE_REPOSITORY_PORT:="$DATABASE_PORT"}
+	: ${DATABASE_REPOSITORY_USER:="$DATABASE_USER"}
+	: ${DATABASE_REPOSITORY_PASSWD:="$DATABASE_PASSWD"}
+	: ${DATABASE_REPOSITORY_TYPE:="$DATABASE_TYPE"}
+	: ${DATABASE_REPOSITORY_URL:="jdbc:mysql://$DATABASE_REPOSITORY_HOST:$DATABASE_REPOSITORY_PORT/$DATABASE_REPOSITORY"}
+	: ${DATABASE_REPOSITORY_VALIDATION_QUERY:="$DATABASE_VALIDATION_QUERY"}
+	: ${DATABASE_REPOSITORY_MAX_ACTIVE:="$DATABASE_MAX_ACTIVE"}
+	: ${DATABASE_REPOSITORY_MAX_IDLE:="$DATABASE_MAX_IDLE"}
+	: ${DATABASE_REPOSITORY_MAX_WAIT:="$DATABASE_MAX_WAIT"}
 	
 	/bin/cp -f $BISERVER_HOME/pentaho-solutions/system/jackrabbit/repository.xml.template $BISERVER_HOME/pentaho-solutions/system/jackrabbit/repository.xml \
-		&& sed -i -e 's|\(jdbc.driver=\).*|\1'"$DATABASE_DRIVER"'|' pentaho-solutions/system/applicationContext-spring-security-hibernate.properties \
-		&& sed -i -e 's|\(jdbc.url=\).*|\1'"$DATABASE_HIBERNATE_URL"'|' pentaho-solutions/system/applicationContext-spring-security-hibernate.properties \
-		&& sed -i -e 's|\(jdbc.username=\).*|\1'"$DATABASE_USER"'|' pentaho-solutions/system/applicationContext-spring-security-hibernate.properties \
-		&& sed -i -e 's|\(jdbc.password=\).*|\1'"$DATABASE_PASSWD"'|' pentaho-solutions/system/applicationContext-spring-security-hibernate.properties \
-		&& sed -i -e 's|\(hibernate.dialect=\).*|\1'"$DATABASE_DIALECT"'|' pentaho-solutions/system/applicationContext-spring-security-hibernate.properties \
-		&& sed -i -e 's|\(datasource.driver.classname=\).*|\1'"$DATABASE_DRIVER"'|' pentaho-solutions/system/applicationContext-spring-security-jdbc.properties \
-		&& sed -i -e 's|\(datasource.url=\).*|\1'"$DATABASE_HIBERNATE_URL"'|' pentaho-solutions/system/applicationContext-spring-security-jdbc.properties \
-		&& sed -i -e 's|\(datasource.username=\).*|\1'"$DATABASE_USER"'|' pentaho-solutions/system/applicationContext-spring-security-jdbc.properties \
-		&& sed -i -e 's|\(datasource.password=\).*|\1'"$DATABASE_PASSWD"'|' pentaho-solutions/system/applicationContext-spring-security-jdbc.properties \
-		&& sed -i -e 's|\(datasource.validation.query=\).*|\1'"$DATABASE_VALIDATION_QUERY"'|' pentaho-solutions/system/applicationContext-spring-security-jdbc.properties \
-		&& sed -i -e 's|\(<config-file>\).*\(</config-file>\)|\1system/hibernate/'"$STORAGE_TYPE"'.hibernate.cfg.xml\2|' pentaho-solutions/system/hibernate/hibernate-settings.xml \
-		&& sed -i -e 's|\(<property name="connection.driver_class">\).*\(</property>\)|\1'"$DATABASE_DRIVER"'\2|' pentaho-solutions/system/hibernate/${STORAGE_TYPE}.hibernate.cfg.xml \
-		&& sed -i -e 's|\(<property name="connection.url">\).*\(</property>\)|\1'"$DATABASE_HIBERNATE_URL"'\2|' pentaho-solutions/system/hibernate/${STORAGE_TYPE}.hibernate.cfg.xml \
-		&& sed -i -e 's|\(<property name="dialect">\).*\(</property>\)|\1'"$DATABASE_DIALECT"'\2|' pentaho-solutions/system/hibernate/${STORAGE_TYPE}.hibernate.cfg.xml \
-		&& sed -i -e 's|\(<property name="connection.username">\).*\(</property>\)|\1'"$DATABASE_USER"'\2|' pentaho-solutions/system/hibernate/${STORAGE_TYPE}.hibernate.cfg.xml \
-		&& sed -i -e 's|\(<property name="connection.password">\).*\(</property>\)|\1'"$DATABASE_PASSWD"'\2|' pentaho-solutions/system/hibernate/${STORAGE_TYPE}.hibernate.cfg.xml \
+		&& sed -i -e 's|\(jdbc.driver=\).*|\1'"$DATABASE_HIBERNATE_DRIVER"'|' \
+			-e 's|\(jdbc.url=\).*|\1'"$DATABASE_HIBERNATE_URL"'|' \
+			-e 's|\(jdbc.username=\).*|\1'"$DATABASE_HIBERNATE_USER"'|' \
+			-e 's|\(jdbc.password=\).*|\1'"$DATABASE_HIBERNATE_PASSWD"'|' \
+			-e 's|\(hibernate.dialect=\).*|\1'"$DATABASE_HIBERNATE_DIALECT"'|' pentaho-solutions/system/applicationContext-spring-security-hibernate.properties \
+		&& sed -i -e 's|\(datasource.driver.classname=\).*|\1'"$DATABASE_HIBERNATE_DRIVER"'|' \
+			-e 's|\(datasource.url=\).*|\1'"$DATABASE_HIBERNATE_URL"'|' \
+			-e 's|\(datasource.username=\).*|\1'"$DATABASE_HIBERNATE_USER"'|' \
+			-e 's|\(datasource.password=\).*|\1'"$DATABASE_HIBERNATE_PASSWD"'|' \
+			-e 's|\(datasource.validation.query=\).*|\1'"$DATABASE_HIBERNATE_VALIDATION_QUERY"'|' pentaho-solutions/system/applicationContext-spring-security-jdbc.properties \
+			-e 's|\(<config-file>\).*\(</config-file>\)|\1system/hibernate/'"$STORAGE_TYPE"'.hibernate.cfg.xml\2|' pentaho-solutions/system/hibernate/hibernate-settings.xml \
+		&& sed -i -e 's|\(<session-factory>\)|\1\n    <!-- using container-managed JNDI -->\n    <property name="hibernate.connection.datasource">java:comp/env/jdbc/Hibernate</property>|' \
+			-e 's|\(<property name="dialect">\).*\(</property>\)|\1'"$DATABASE_HIBERNATE_DIALECT"'\2|' \
+			-e 's|\(<property name="connection.driver_class">\).*\(</property>\)|<!-- \1'"$DATABASE_HIBERNATE_DRIVER"'\2 -->|' \
+			-e 's|\(<property name="connection.url">\).*\(</property>\)|<!-- \1'"$DATABASE_HIBERNATE_URL"'\2 -->|' \
+			-e 's|\(<property name="connection.username">\).*\(</property>\)|<!-- \1'"$DATABASE_HIBERNATE_USER"'\2 -->|' \
+			-e 's|\(<property name="connection.password">\).*\(</property>\)|<!-- \1'"$DATABASE_HIBERNATE_PASSWD"'\2 -->|' pentaho-solutions/system/hibernate/${STORAGE_TYPE}.hibernate.cfg.xml \
 		&& sed -i -e 's|\(org.quartz.jobStore.driverDelegateClass\).*|\1 = org.quartz.impl.jdbcjobstore.StdJDBCDelegate|' pentaho-solutions/system/quartz/quartz.properties \
-		&& sed -i -e 's|@@DRIVER@@|'"$DATABASE_DRIVER"'|' pentaho-solutions/system/jackrabbit/repository.xml \
-		&& sed -i -e 's|@@URL@@|'"$DATABASE_REPOSITORY_URL"'|' pentaho-solutions/system/jackrabbit/repository.xml \
-		&& sed -i -e 's|@@USER@@|'"$DATABASE_USER"'|' pentaho-solutions/system/jackrabbit/repository.xml \
-		&& sed -i -e 's|@@PASSWD@@|'"$DATABASE_PASSWD"'|' pentaho-solutions/system/jackrabbit/repository.xml \
-		&& sed -i -e 's|@@DB_TYPE@@|'"$DATABASE_TYPE"'|' pentaho-solutions/system/jackrabbit/repository.xml \
+		&& sed -i -e 's|@@DRIVER@@|'"$DATABASE_REPOSITORY_DRIVER"'|' \
+			-e 's|@@URL@@|'"$DATABASE_REPOSITORY_URL"'|' \
+			-e 's|@@USER@@|'"$DATABASE_REPOSITORY_USER"'|' \
+			-e 's|@@PASSWD@@|'"$DATABASE_REPOSITORY_PASSWD"'|' \
+			-e 's|@@DB_TYPE@@|'"$DATABASE_REPOSITORY_TYPE"'|' \
+			-e 's|@@VALIDATION_QUERY@@|'"$DATABASE_REPOSITORY_VALIDATION_QUERY"'|' \
+			-e 's|@@POOL_SIZE@@|'"$DATABASE_REPOSITORY_MAX_ACTIVE"'|' pentaho-solutions/system/jackrabbit/repository.xml \
 		&& cat <<< "<?xml version='1.0' encoding='UTF-8'?>
 <Context path='/pentaho' docbase='webapps/pentaho/'>
 	<Resource name='jdbc/Hibernate' auth='Container' type='javax.sql.DataSource'
-		factory='org.apache.commons.dbcp.BasicDataSourceFactory' maxActive='20' maxIdle='5'
-		maxWait='10000' username='${DATABASE_USER}' password='${DATABASE_PASSWD}'
-		driverClassName='${DATABASE_DRIVER}' url='${DATABASE_HIBERNATE_URL}'
-		validationQuery='${DATABASE_VALIDATION_QUERY}' />
+		factory='org.apache.commons.dbcp.BasicDataSourceFactory' maxActive='${DATABASE_HIBERNATE_MAX_ACTIVE}' maxIdle='${DATABASE_HIBERNATE_MAX_IDLE}'
+		maxWait='${DATABASE_QUARTZ_MAX_WAIT}' username='${DATABASE_HIBERNATE_USER}' password='${DATABASE_HIBERNATE_PASSWD}'
+		driverClassName='${DATABASE_HIBERNATE_DRIVER}' url='${DATABASE_HIBERNATE_URL}'
+		validationQuery='${DATABASE_HIBERNATE_VALIDATION_QUERY}' />
 		
 	<Resource name='jdbc/Quartz' auth='Container' type='javax.sql.DataSource'
-		factory='org.apache.commons.dbcp.BasicDataSourceFactory' maxActive='20' maxIdle='5'
-		maxWait='10000' username='${DATABASE_USER}' password='${DATABASE_PASSWD}'
-		driverClassName='${DATABASE_DRIVER}' url='${DATABASE_QUARTZ_URL}'
-		validationQuery='${DATABASE_VALIDATION_QUERY}' />
+		factory='org.apache.commons.dbcp.BasicDataSourceFactory' maxActive='${DATABASE_QUARTZ_MAX_ACTIVE}' maxIdle='${DATABASE_REPOSITORY_MAX_IDLE}'
+		maxWait='${DATABASE_QUARTZ_MAX_WAIT}' username='${DATABASE_QUARTZ_USER}' password='${DATABASE_QUARTZ_PASSWD}'
+		driverClassName='${DATABASE_QUARTZ_DRIVER}' url='${DATABASE_QUARTZ_URL}'
+		validationQuery='${DATABASE_QUARTZ_VALIDATION_QUERY}' />
 </Context>" > tomcat/webapps/pentaho/META-INF/context.xml
 
-	/usr/local/bin/wait-for-it.sh -t 0 $DATABASE_HOST:$DATABASE_PORT -- echo Database is UP
+	for i in $(echo "$DATABASE_HIBERNATE_HOST:$DATABASE_HIBERNATE_PORT $DATABASE_QUARTZ_HOST:$DATABASE_QUARTZ_PORT $DATABASE_REPOSITORY_HOST:$DATABASE_REPOSITORY_PORT" | tr ' ' '\n' | uniq); do echo /usr/local/bin/wait-for-it.sh -t 0 $i -- echo Database $i is UP; done
 }
 
 init_biserver() {
