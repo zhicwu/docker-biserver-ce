@@ -1,0 +1,24 @@
+version: '2'
+
+services:
+  biserver:
+    image: zhicwu/biserver-ce:7.1
+    hostname: ${SERVER_HOST}
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+    ports:
+      - "${SERVER_PORT}:8080"
+    environment:
+      HOST_USER_ID: ${HOST_USER_ID}
+      STORAGE_TYPE: ${STORAGE_TYPE}
+      SERVER_NAME: biserver-ce
+      SERVER_HOST: ${SERVER_HOST}
+      SERVER_PORT: ${SERVER_PORT}
+      SERVER_URL: http://${SERVER_HOST}:${SERVER_PORT}/pentaho/
+      DATABASE_HOST: ${DATABASE_HOST}
+      DATABASE_PORT: ${DATABASE_PORT}
+      DATABASE_USER: ${DATABASE_USER}
+      DATABASE_PASSWD: ${DATABASE_PASSWD}
+      DATABASE_TYPE: ${DATABASE_TYPE}
