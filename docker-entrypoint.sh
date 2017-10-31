@@ -178,6 +178,19 @@ init_biserver() {
 	fi
 }
 
+load_secrets() {
+	: ${SECRETS_DIRECTORY:="/run/secrets"}
+
+    # load secrets if any
+    if [ -d "$SECRETS_DIRECTORY" ]; then
+        for s in $SECRETS_DIRECTORY/*; do
+            [ -f "$s" ] || continue
+            echo "Loading secret $s..."
+            source $s && export $(grep -v '^#' $s | cut -d= -f1)
+        done
+    fi
+}
+
 gen_kettle_config() {
 	if [ ! -f $KETTLE_HOME/.kettle/kettle.properties ]; then
 		echo "Generating kettle.properties..."
@@ -236,6 +249,8 @@ KETTLE_CARTE_RETRIES=3
 }
 
 apply_changes() {
+	load_secrets
+
 	gen_kettle_config
 	
 	# you can mount a volume pointing to /pdi-ext for customization
@@ -259,13 +274,11 @@ apply_changes() {
 			&& sed -i -e 's|.*\(\[END HSQLDB STARTER\] -->\)|\1|' tomcat/webapps/pentaho/WEB-INF/web.xml
 		
 		if [ -f database.env ]; then
-			echo "Updating database configuration..."
+			echo "Loading database configuration from database.env ..."
 			. database.env
-			
-			update_db
-		else
-			echo "Skip database configuration as database.env is not available"
 		fi
+
+		update_db
 	else
 		# only useful for testing / development purpose
 		# on production, you'll need to use external database like MySQL
