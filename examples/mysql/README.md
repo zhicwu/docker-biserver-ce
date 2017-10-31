@@ -202,7 +202,6 @@ Steps
 
     Assume your MySQL server is `mysql.local` and it's listening on port `3306`. You want to expose port `18080` on your BI server, say `bi-server.local`, to provide BI service. You'll need a `.env` file with the following content.
 
-        ```ini
         SERVER_HOST=bi-server.local
         SERVER_PORT=18080
 
@@ -212,18 +211,16 @@ Steps
         DATABASE_PORT=3306
         DATABASE_USER=pentaho
         DATABASE_PASSWD=pentaho
-        ```
 
 3. Run and test
 
     This is the simple part. Follow instructions below, open up a browser and navigate to http://bi-server.local:18080/pentaho, you should be able to use `admin`/`password` log into the server in a few minutes.
 
-        ```bash
         # cd </path/to/docker-compose.yml>
         # docker-compose up
         ...
         <Press Ctrl+C to exit>
-        ```
+
     Also if you take a look at the databases you just created, you'll see a few tables being created during server starting.
 
 References
