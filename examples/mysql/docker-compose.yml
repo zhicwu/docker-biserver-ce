@@ -1,24 +1,38 @@
 version: '2'
 
 services:
+  mysqlserver:
+    image: mysql/mysql-server:5.7
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+    environment:
+      MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+    volumes:
+      - ./mysql:/var/lib/mysql
+      - ./create-databases.sql:/docker-entrypoint-initdb.d/create-databases.sql
+
   biserver:
     image: zhicwu/biserver-ce:7.1
-    hostname: ${SERVER_HOST}
     logging:
       options:
         max-size: 10m
         max-file: "3"
     ports:
-      - "${SERVER_PORT}:8080"
+      - "18080:8080"
     environment:
-      HOST_USER_ID: ${HOST_USER_ID}
-      STORAGE_TYPE: ${STORAGE_TYPE}
+      STORAGE_TYPE: mysql5
       SERVER_NAME: biserver-ce
-      SERVER_HOST: ${SERVER_HOST}
-      SERVER_PORT: ${SERVER_PORT}
-      SERVER_URL: http://${SERVER_HOST}:${SERVER_PORT}/pentaho/
-      DATABASE_HOST: ${DATABASE_HOST}
-      DATABASE_PORT: ${DATABASE_PORT}
-      DATABASE_USER: ${DATABASE_USER}
-      DATABASE_PASSWD: ${DATABASE_PASSWD}
-      DATABASE_TYPE: ${DATABASE_TYPE}
+      SERVER_HOST: localhost
+      SERVER_PORT: 18080
+      SERVER_URL: http://localhost:18080/pentaho/
+      DATABASE_HOST: mysqlserver
+      DATABASE_PORT: 3306
+      DATABASE_USER: pentaho
+      DATABASE_PASSWD: pentaho
+      DATABASE_TYPE: mysql
+    volumes:
+      - ./pentaho:/biserver-ce/tomcat/logs
+    depends_on:
+      - mysqlserver
