@@ -119,12 +119,12 @@ update_db() {
 			-e 's|\(datasource.password=\).*|\1'"$DATABASE_HIBERNATE_PASSWD"'|' \
 			-e 's|\(datasource.validation.query=\).*|\1'"$DATABASE_HIBERNATE_VALIDATION_QUERY"'|' pentaho-solutions/system/applicationContext-spring-security-jdbc.properties \
 			-e 's|\(<config-file>\).*\(</config-file>\)|\1system/hibernate/'"$STORAGE_TYPE"'.hibernate.cfg.xml\2|' pentaho-solutions/system/hibernate/hibernate-settings.xml \
-		&& sed -i -e 's|\(<session-factory>\)|\1\n    <!-- using container-managed JNDI -->\n    <property name="hibernate.connection.datasource">java:comp/env/jdbc/Hibernate</property>|' \
+		&& sed -i -e 's|\(<session-factory>\).*|\1<!-- using container-managed JNDI --><property name="hibernate.connection.datasource">java:comp/env/jdbc/Hibernate</property>|' \
 			-e 's|\(<property name="dialect">\).*\(</property>\)|\1'"$DATABASE_HIBERNATE_DIALECT"'\2|' \
-			-e 's|\(<property name="connection.driver_class">\).*\(</property>\)|<!-- \1'"$DATABASE_HIBERNATE_DRIVER"'\2 -->|' \
-			-e 's|\(<property name="connection.url">\).*\(</property>\)|<!-- \1'"$DATABASE_HIBERNATE_URL"'\2 -->|' \
-			-e 's|\(<property name="connection.username">\).*\(</property>\)|<!-- \1'"$DATABASE_HIBERNATE_USER"'\2 -->|' \
-			-e 's|\(<property name="connection.password">\).*\(</property>\)|<!-- \1'"$DATABASE_HIBERNATE_PASSWD"'\2 -->|' pentaho-solutions/system/hibernate/${STORAGE_TYPE}.hibernate.cfg.xml \
+			-e 's|.*\(<property name="connection.driver_class">\).*\(</property>\).*|<!-- \1'"$DATABASE_HIBERNATE_DRIVER"'\2 -->|' \
+			-e 's|.*\(<property name="connection.url">\).*\(</property>\).*|<!-- \1'"$DATABASE_HIBERNATE_URL"'\2 -->|' \
+			-e 's|.*\(<property name="connection.username">\).*\(</property>\).*|<!-- \1'"$DATABASE_HIBERNATE_USER"'\2 -->|' \
+			-e 's|.*\(<property name="connection.password">\).*\(</property>\).*|<!-- \1'"$DATABASE_HIBERNATE_PASSWD"'\2 -->|' pentaho-solutions/system/hibernate/${STORAGE_TYPE}.hibernate.cfg.xml \
 		&& sed -i -e 's|\(org.quartz.jobStore.driverDelegateClass\).*|\1 = org.quartz.impl.jdbcjobstore.StdJDBCDelegate|' pentaho-solutions/system/quartz/quartz.properties \
 		&& sed -i -e 's|@@DRIVER@@|'"$DATABASE_REPOSITORY_DRIVER"'|' \
 			-e 's|@@URL@@|'"$DATABASE_REPOSITORY_URL"'|' \
