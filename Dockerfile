@@ -80,6 +80,7 @@ RUN echo "Download patches and dependencies..." \
 		&& wget -O tomcat/bin/jmx-exporter.jar http://central.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/${JMX_EXPORTER_VERSION}/jmx_prometheus_javaagent-${JMX_EXPORTER_VERSION}.jar \
 		&& wget --progress=dot:giga https://github.com/zhicwu/pdi-cluster/releases/download/${PDI_PATCH}/pentaho-kettle-${PDI_PATCH}.jar \
 			https://github.com/zhicwu/pdi-cluster/releases/download/${PDI_PATCH}/pentaho-platform-${PDI_PATCH}.jar \
+			https://github.com/zhicwu/pdi-cluster/releases/download/${PDI_PATCH}/mondrian-${PDI_PATCH}.jar \
 		&& wget -P pentaho-solutions/system/saiku/lib/ http://central.maven.org/maven2/com/fasterxml/jackson/module/jackson-module-jaxb-annotations/2.5.1/jackson-module-jaxb-annotations-2.5.1.jar \
 		&& chmod +x /usr/local/bin/*.sh \
 	&& echo "Applying patches..." \
@@ -89,10 +90,16 @@ RUN echo "Download patches and dependencies..." \
 			pentaho-solutions/system/saiku/components/saikuWidget/component.xml \
 		&& rm -f pentaho-solutions/system/saiku/lib/cpf-*.jar \
 		&& cp pentaho-solutions/system/sparkl/lib/cpf-*.jar pentaho-solutions/system/saiku/lib/. \
+		&& mv pentaho-solutions/system/saiku/lib/mondrian*.jar pentaho-solutions/system/saiku/lib/mondrian.jar.disabled \
+		&& ln -s $BISERVER_HOME/tomcat/webapps/pentaho/WEB-INF/lib/mondrian*.jar pentaho-solutions/system/saiku/lib/mondrian.jar \
 		&& mkdir -p patches \
-		&& unzip -q pentaho-kettle*.jar -d patches \
+		&& unzip -q mondrian*.jar -d patches \
+		&& unzip -oq pentaho-kettle*.jar -d patches \
 		&& unzip -oq pentaho-platform*.jar -d patches \
 		&& cd patches \
+		&& $JAVA_HOME/bin/jar uf ../tomcat/webapps/pentaho/WEB-INF/lib/mondrian-*.jar META-INF/services \
+		&& $JAVA_HOME/bin/jar uf ../tomcat/webapps/pentaho/WEB-INF/lib/mondrian-*.jar mondrian \
+		&& rm -rf META-INF/services mondrian \
 		&& $JAVA_HOME/bin/jar uf ../pentaho-solutions/system/pentaho-pdi-platform-plugin/lib/DIS-${BISERVER_VERSION}.jar org/pentaho/platform/plugin/kettle \
 		&& rm -rf org/pentaho/platform/plugin/kettle \
 		&& $JAVA_HOME/bin/jar uf ../tomcat/webapps/pentaho/WEB-INF/lib/pdi-pur-plugin-${BISERVER_VERSION}.jar org/pentaho/di/repository/pur/LazyUnifiedRepositoryDirectory.class \
